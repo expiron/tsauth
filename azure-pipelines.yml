@@ -1,0 +1,29 @@
+
+pr: none
+
+jobs:
+- job: Host
+  displayName: Host Compile
+  pool:
+    vmImage: Ubuntu-Latest
+  timeoutInMinutes: 0
+  steps:
+  - script: |
+      sudo apt-get update
+      sudo apt-get install -y \
+        build-essential cmake gcc-multilib git-core \
+        libmbedtls-dev libcurl4-openssl-dev libjson-c-dev
+    displayName: Install build dependencies
+
+  - script: |
+      mkdir -p build
+      cd build
+      cmake ..
+      make -j 1 V=sc
+    displayName: Compile
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish artifact
+    inputs:
+      artifactName: HostBuiltBinary
+      pathtoPublish: $(Build.SourcesDirectory)/build/tsauth
