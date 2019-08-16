@@ -6,7 +6,7 @@
 
 #define AUTH_BASE_URL       "auth.tsinghua.edu.cn"
 #define AUTH_BASE_ENDPOINT  "auth.tsinghua.edu.cn/cgi-bin"
-#define ENDPOINT_USER_INFO  AUTH_BASE_URL "/rad_user_info.php"
+#define ENDPOINT_USER_INFO  "auth4.tsinghua.edu.cn/rad_user_info.php"
 #define ENDPOINT_GET_IPV4   "http://118.229.2.198/getip.php"
 #define ENDPOINT_GET_IPV6   "http://[2402:f000:0:2c4::198]/getip.php"
 
