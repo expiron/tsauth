@@ -83,11 +83,11 @@ _noreturn_ void die_usage()
         "Usage:\n"
         "    tsauth [OPTIONS] --status\n"
         "    tsauth [OPTIONS] [--login] [-d <IP>] -u <username> -p <password>\n"
-        "    tsauth [OPTIONS] --logout [-d <IP>] -u <username> [-p <password>]\n\n"
+        "    tsauth [OPTIONS] --logout [-d <IP>] -u <username>\n\n"
         "Options:\n"
         "    -4, --ipv4                     Authorize IPv4 network only\n"
         "    -6, --ipv6                     Authorize IPv6 network only\n"
-        "    -d, --addr <IP address>        Specify the IP(v4) address to authorize\n"
+        "    -d, --addr <IP address>        Specify the IP address to authorize\n"
         "        --http                     Use HTTP for requests instead of HTTPS\n"
         "        --inside                   Authorize campus internal network only\n"
         "    -i, --login                    Perform login operation (default)\n"
@@ -95,10 +95,10 @@ _noreturn_ void die_usage()
         "    -u, --username <username>      Tsinghua username or ID number\n"
         "    -p, --password <plaintext>     Password in plaintext\n"
         "    -s, --status                   Show current status\n"
-        "    -t, --timeout <seconds>        Timeout of each request (default: 10)\n"
+        "    -t, --timeout <seconds>        Timeout of each request (default: 1)\n"
         "    -v, --verbose                  Show detailed information\n"
-        "    -h, -?, --help                 Display usage\n"
-        "        --version                  Display version string\n");
+        "    -h, -?, --help                 Show usage and quit\n"
+        "        --version                  Show version string and quit\n");
 
     exit(EXIT_FAILURE);
 }

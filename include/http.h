@@ -8,7 +8,7 @@
 
 extern CURL *curl;
 
-int http_init(long timeout, int use_https);
+int http_init(long timeout);
 char *http_get(const char *url);
 void http_cleanup();
 

@@ -77,7 +77,6 @@ static inline void update_info_from_json(char **dst, const char *key, json_objec
     {
         *dst = (char *)xrealloc(*dst, json_object_get_string_len(iter->val) + 1);
         strcpy(*dst, json_object_get_string(iter->val));
-        // verbose("Got %s: %s", key, *dst);
     }
 }
 
@@ -115,7 +114,6 @@ int get_challenge(tsauth_info *info)
             if (0 == strcmp(iter.key, "error") && 0 != strcmp("ok", json_object_get_string(iter.val)))
                 result = TSAUTH_ERROR_CHALLENGE_FAILED;
         }
-        verbose("get_challenge response: %s", res);
         json_object_put(data);
     }
     else

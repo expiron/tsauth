@@ -3,6 +3,8 @@
 #include "http.h"
 #include "utils.h"
 
+#include <curl/curl.h>
+
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,7 +38,7 @@ int main(int argc, char *argv[])
     char *ip = NULL;
     char *username = NULL;
     char *password = NULL;
-    int timeout = 10;
+    int timeout = 1;
 
     if (1 == argc)
         die_usage();
@@ -100,24 +102,21 @@ int main(int argc, char *argv[])
     if ((TSAUTH_FLAG_LOGIN | TSAUTH_FLAG_LOGOUT) == (flags & (TSAUTH_FLAG_LOGIN | TSAUTH_FLAG_LOGOUT)))
         die("confused option: --login, --logout");
 
-    http_init(timeout, !(flags & TSAUTH_FLAG_HTTP));
+    http_init(timeout);
 
     if (flags & TSAUTH_FLAG_STATUS)
         tsauth_status();
     else
     {
-        if (!ip)
-        {
-            if (TSAUTH_FLAG_IPV4 == (flags & (TSAUTH_FLAG_IPV4 | TSAUTH_FLAG_IPV6)))
-                ip = get_ipv4();
-            if (TSAUTH_FLAG_IPV6 == (flags & (TSAUTH_FLAG_IPV4 | TSAUTH_FLAG_IPV6)))
-                ip = get_ipv6();
-        }
+        // set resolve ipv4(6)
+        if (TSAUTH_FLAG_IPV4 == (flags & (TSAUTH_FLAG_IPV4 | TSAUTH_FLAG_IPV6)))
+            curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        if (TSAUTH_FLAG_IPV6 == (flags & (TSAUTH_FLAG_IPV4 | TSAUTH_FLAG_IPV6)))
+            curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
 
         info = tsauth_init(username, password, ip, flags & TSAUTH_FLAG_INSIDE);
         info->double_stack = !((flags ^ (flags >> 1)) & TSAUTH_FLAG_IPV4);
-        if (info->double_stack)
-            message("Auth double stack");
+
         if (info->ip)
             message("IP: %s", info->ip);
 

@@ -33,8 +33,6 @@ static size_t write_data(char *ptr, size_t size, size_t nmemb, void *data)
         return 0;
     }
 
-    // verbose("ptr = %8x", mem->ptr);
-    // verbose("chunk = %s", mem->ptr);
     mem->ptr = (char *)xrealloc(mem->ptr, new_len);
     memcpy(mem->ptr + mem->len, ptr, len);
     mem->len += len;
@@ -43,7 +41,7 @@ static size_t write_data(char *ptr, size_t size, size_t nmemb, void *data)
     return len;
 }
 
-int http_init(long timeout, int use_https)
+int http_init(long timeout)
 {
     // init curl
     curl = curl_easy_init();
@@ -51,11 +49,11 @@ int http_init(long timeout, int use_https)
         die("Could not init cURL library");
     // set callbacks
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-    curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    if (use_https)
-        curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
-    else
+    // set use http(s)
+    if (flags & TSAUTH_FLAG_HTTP)
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "http");
+    else
+        curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 }
 
@@ -84,7 +82,7 @@ char *http_get(const char *url)
         warn("Perform request failed: %s", curl_easy_strerror(ret));
     }
 
-    verbose("[HTTP] Recv %s", result);
+    verbose("[HTTP] Res %s", result);
     return result;
 }
 

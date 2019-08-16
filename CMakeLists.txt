@@ -40,7 +40,7 @@ endif()
 
 add_executable(${TsAuth_TARGET} ${TsAuth_SOURCES})
 target_include_directories(${TsAuth_TARGET} PUBLIC ${TsAuth_INCLUDES})
-target_compile_definitions(${TsAuth_TARGET} PUBLIC TSAUTH_VERSION="0.3.2")
+target_compile_definitions(${TsAuth_TARGET} PUBLIC TSAUTH_VERSION="0.3.4")
 # target_compile_definitions(${TsAuth_TARGET} PUBLIC TSAUTH_GIT_COMMIT_ID="${GIT_COMMIT_ID}")
 target_link_libraries(${TsAuth_TARGET} ${TsAuth_LIBRARIES})
 install(TARGETS ${TsAuth_TARGET} RUNTIME DESTINATION bin)
