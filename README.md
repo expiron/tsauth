@@ -8,6 +8,7 @@ A tiny client for Tsinghua network AAA (Authentication, Authorization, Accountin
 1. Install dependencies
 ```bash
 sudo apt-get update
+sudo apt-get install build-essential cmake
 sudo apt-get install libmbedtls-dev libcurl4-openssl-dev libjson-c-dev
 ```
 2. Clone sources
