@@ -7,7 +7,7 @@
 e6f6c8d257e9116789f906306f3591589e24851061b1026ca80a466d05e0ad3d  02-auth-hashes.min.js
 3be1b344d375be4d0dcd0fa73460807ce9621e450c1f6c95e45287ebd1c35ddb  03-auth-portal.main.min.js
 7d607a2e094d70cf42c7a06b8a649f64e7ffb06647e5530311fb606170ab2d69  04-auth-md5.js
-76409450f14f50c2cec0288f5bd14adea52d9e4e767cfa7295f6e296ef5a6b3a  05-usrg-login.php
+747d1999430acf8a82aab1d8a4f8eecafa292da10e404cc96cae51b1d59dd44e  05-usrg-login.php
 ef0cde6601b886d1a4e8562cdb5936c3f6f6ed5d8964ff619d146bf64e943ab2  06-usrg-ip_login_import.php
 3d5e64e16fec136eae778c3010a04278851bf07d1b1a7c34a30530b414654035  07-usrg-portal.main.min.js
 
@@ -997,6 +997,11 @@ function hidden_account()
     document.getElementById("account").style.display="none";
 }
 //-->
+
+function openwin()
+ {
+     window.open ("tunet_win.html","newwindow","height=200,width=200,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,left=80,top=40");
+   }
 </script>
 </head>
 
@@ -1035,7 +1040,7 @@ function hidden_account()
             <div class="triangle_login"></div>
             <div id="download">
                 <ul id="system">
-                    <li><a class="windows" href="files/Tunet_win.zip" title="Windows">Windows</a></li>
+                    <li><a class="windows"  title="Windows" href="#"  onclick="openwin()" >Windows</a></li>
                         <li><a class="mac" href="files/Tunet2015.dmg" title="MacOS">MacOS</a></li>
                        <li><a class="linux" href="files/Tunet_linux.zip" title="Linux">Linux</a></li>
                     <li><a class="android" href="files/Tunet2015.apk" title="Android">Android</a></li>
