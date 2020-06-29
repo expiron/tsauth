@@ -7,9 +7,9 @@
 e6f6c8d257e9116789f906306f3591589e24851061b1026ca80a466d05e0ad3d  02-auth-hashes.min.js
 3be1b344d375be4d0dcd0fa73460807ce9621e450c1f6c95e45287ebd1c35ddb  03-auth-portal.main.min.js
 7d607a2e094d70cf42c7a06b8a649f64e7ffb06647e5530311fb606170ab2d69  04-auth-md5.js
-747d1999430acf8a82aab1d8a4f8eecafa292da10e404cc96cae51b1d59dd44e  05-usrg-login.php
-ef0cde6601b886d1a4e8562cdb5936c3f6f6ed5d8964ff619d146bf64e943ab2  06-usrg-ip_login_import.php
-3d5e64e16fec136eae778c3010a04278851bf07d1b1a7c34a30530b414654035  07-usrg-portal.main.min.js
+4fed0ef3e302fa2bf327feb6ab708195b6779b40703c692140382d9944c946e8  05-usrg-login.php
+a5c44e583014ef6dcbb77120296de40801229b8a85ccae1a3535dd6b5b802d18  06-usrg-ip_login_import.php
+bc65998031ea0355e2e200e1407883e8558c7e46b7b9c0f2237994dbc4ae03f4  07-usrg-portal.main.min.js
 
 ####################################################################################################
 ###########################          01-auth-srun_portal_pc.php          ###########################
@@ -953,13 +953,13 @@ function bit_rol(num, cnt)
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
 <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
-<title>清华大学校园网&nbsp;Tsinghua&nbsp;University&nbsp;Network</title>
+<title>清华大学校园网TsinghuaUniversityNetwork</title>
 
 <link rel="stylesheet" type="text/css" href="css/styles_wired.css" />
 
 <link rel="shortcut icon"
-href="http://net.tsinghua.edu.cn/image/icon16-purple.ico" type="image/x-icon" />
-<link rel="icon" href="http://net.tsinghua.edu.cn/image/icon32.png"  sizes="32x32" type="image/png" />
+href="//net.tsinghua.edu.cn/image/icon16-purple.ico" type="image/x-icon" />
+<link rel="icon" href="//net.tsinghua.edu.cn/image/icon32.png"  sizes="32x32" type="image/png" />
 <script type="text/javascript" src="/script/ajax.js"></script>
 <script type="text/javascript" src="/script/md5.js"></script>
 <script type="text/javascript">
@@ -1011,6 +1011,13 @@ function openwin()
             <a id="title" href="login.php" title="清华大学校园网&#10;Tsinghua&nbsp;University&nbsp;Network"></a>
         </div>
         <!-- start -->
+                <div class="qrcode">
+                <center>
+                <p><img src="/image/temp_service.jpg" width="100" height="100"></p>
+                <p><font size=2>欢迎关注用户服务微信</font></p>
+                </center>
+                </div>
+                &nbsp
             <div class="qrcode">
         <center>
             <p><img src="/image/qrcode_for_258.jpg" width="100" height="100"></p>
@@ -1079,6 +1086,7 @@ function openwin()
     <script language="javascript" src="js/jquery.js"></script>
     <script language="javascript" src="js/hashes.min.js"></script>
     <script language="javascript" src="js/portal.main.min.js"></script>
+     <script type="text/javascript" src="/script/ajax.js"></script>
 </head>
 <body>
 <script>
@@ -1091,6 +1099,10 @@ function checkIp(){
     if(online_type == '1'){
         $("#username").val(user_name+'@tsinghua');
     }
+
+    //查询as_id
+    var res = postData('ip_login_import.php','post','actionType=searchNasId&ip='+$("#user_ip").val().trim());
+    if(res !== 'fail')$("#ac_id").val(res);
 
 }
 </script>
@@ -1306,7 +1318,7 @@ $(function() {
             "username": uname.val(),
             "password": pwd.val(),
             "ac_id": acid.val(),
-            "ip": uip.val(),
+            "ip": uip.val().trim(),
         };
     if(location.protocol == "http:") {
              port = "69";
