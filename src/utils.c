@@ -8,9 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_BUF_LEN (1024)
+
 void message(const char *format, ...)
 {
-    char msg[2048];
+    char msg[MAX_BUF_LEN];
     va_list params;
 
     va_start(params, format);
@@ -22,7 +24,7 @@ void message(const char *format, ...)
 
 void warn(const char *format, ...)
 {
-    char msg[2048];
+    char msg[MAX_BUF_LEN];
     va_list params;
 
     va_start(params, format);
@@ -36,7 +38,7 @@ void verbose(const char *format, ...)
 {
     if (!(flags & TSAUTH_FLAG_VERBOSE))
         return;
-    char msg[2048];
+    char msg[MAX_BUF_LEN];
     va_list params;
 
     va_start(params, format);
@@ -48,7 +50,7 @@ void verbose(const char *format, ...)
 
 _noreturn_ void die(const char *err, ...)
 {
-    char message[2048];
+    char message[MAX_BUF_LEN];
     va_list params;
 
     va_start(params, err);
@@ -61,7 +63,7 @@ _noreturn_ void die(const char *err, ...)
 
 _noreturn_ void die_errno(const char *err, ...)
 {
-    char message[2048], *error_message;
+    char message[MAX_BUF_LEN], *error_message;
     va_list params;
 
     error_message = strerror(errno);
@@ -85,8 +87,6 @@ _noreturn_ void die_usage()
         "    tsauth [OPTIONS] [--login] [-d <IP>] -u <username> -p <password>\n"
         "    tsauth [OPTIONS] --logout [-d <IP>] -u <username>\n\n"
         "Options:\n"
-        "    -4, --ipv4                     Authorize IPv4 network only\n"
-        "    -6, --ipv6                     Authorize IPv6 network only\n"
         "    -d, --addr <IP address>        Specify the IP address to authorize\n"
         "        --http                     Use HTTP for requests instead of HTTPS\n"
         "        --inside                   Authorize campus internal network only\n"
@@ -94,7 +94,6 @@ _noreturn_ void die_usage()
         "    -o, --logout                   Perform logout operation\n"
         "    -u, --username <username>      Tsinghua username or ID number\n"
         "    -p, --password <plaintext>     Password in plaintext\n"
-        "    -s, --status                   Show current status\n"
         "    -t, --timeout <seconds>        Timeout of each request (default: 1)\n"
         "    -v, --verbose                  Show detailed information\n"
         "    -h, -?, --help                 Show usage and quit\n"

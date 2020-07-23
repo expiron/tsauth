@@ -6,14 +6,11 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#define TSAUTH_FLAG_IPV4        (1 << 0)
-#define TSAUTH_FLAG_IPV6        (1 << 1)
-#define TSAUTH_FLAG_INSIDE      (1 << 2)
-#define TSAUTH_FLAG_LOGOUT      (1 << 3)
-#define TSAUTH_FLAG_LOGIN       (1 << 4)
-#define TSAUTH_FLAG_STATUS      (1 << 5)
-#define TSAUTH_FLAG_HTTP        (1 << 6)
-#define TSAUTH_FLAG_VERBOSE     (1 << 7)
+#define TSAUTH_FLAG_INSIDE      (1 << 1)
+#define TSAUTH_FLAG_LOGOUT      (1 << 2)
+#define TSAUTH_FLAG_LOGIN       (1 << 3)
+#define TSAUTH_FLAG_HTTP        (1 << 4)
+#define TSAUTH_FLAG_VERBOSE     (1 << 5)
 
 extern unsigned char flags;
 

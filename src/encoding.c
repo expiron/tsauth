@@ -147,7 +147,7 @@ int xencode(unsigned char *dst, size_t dlen, size_t *olen,
 
 static char hex_digits[] = "0123456789abcdef";
 
-int bytes_to_hex(char **dst, const unsigned char *bytes, size_t len)
+void bytes_to_hex(char **dst, const unsigned char *bytes, size_t len)
 {
     if (!*dst)
         *dst = (char *)xmalloc(len * 2 + 1);
@@ -157,5 +157,4 @@ int bytes_to_hex(char **dst, const unsigned char *bytes, size_t len)
         (*dst)[i * 2 + 1] = hex_digits[bytes[i] & 0xF];
     }
     (*dst)[len * 2] = '\0';
-    return (0);
 }

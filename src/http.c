@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <string.h>
 
+#define MAX_BUFFER_SIZE (65536)
+
 struct mem_chunk
 {
     char *ptr;
@@ -14,6 +16,7 @@ struct mem_chunk
 };
 
 CURL *curl = NULL;
+long _timeout = 1;
 
 // Callback for receiving HTTP respose
 static size_t write_data(char *ptr, size_t size, size_t nmemb, void *data)
@@ -41,12 +44,9 @@ static size_t write_data(char *ptr, size_t size, size_t nmemb, void *data)
     return len;
 }
 
-int http_init(long timeout)
+static inline void http_reset()
 {
-    // init curl
-    curl = curl_easy_init();
-    if (!curl)
-        die("Could not init cURL library");
+    curl_easy_reset(curl);
     // set callbacks
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     // set use http(s)
@@ -54,7 +54,20 @@ int http_init(long timeout)
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "http");
     else
         curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+    // set resolve ipv4
+    curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, _timeout);
+}
+
+int http_init(long timeout)
+{
+    // init curl
+    curl = curl_easy_init();
+    if (!curl)
+        die("http_init: could not init cURL library");
+
+    _timeout = timeout;
+    http_reset();
 }
 
 char *http_get(const char *url)
@@ -67,6 +80,7 @@ char *http_get(const char *url)
     char *result = NULL;
 
     memset(&res, 0, sizeof(res));
+    http_reset();
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res);
     verbose("[HTTP] GET %s", url);
@@ -82,13 +96,13 @@ char *http_get(const char *url)
         res.len = 0;
         free(res.ptr);
         res.ptr = NULL;
-        warn("Perform request failed: %s", curl_easy_strerror(ret));
+        warn("http_get: perform request failed: %s", curl_easy_strerror(ret));
     }
 
     return result;
 }
 
-char *http_postform(const char *url, const char *form)
+char *http_post(const char *url, const char *form)
 {
     if (!url)
         return NULL;
@@ -98,8 +112,8 @@ char *http_postform(const char *url, const char *form)
     char *result = NULL;
 
     memset(&res, 0, sizeof(res));
+    http_reset();
     curl_easy_setopt(curl, CURLOPT_URL, url);
-    // curl_easy_setopt(curl, CURLOPT_POST, 1);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, form);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res);
     verbose("[HTTP] POST %s", url);
@@ -116,7 +130,7 @@ char *http_postform(const char *url, const char *form)
         res.len = 0;
         free(res.ptr);
         res.ptr = NULL;
-        warn("Perform request failed: %s", curl_easy_strerror(ret));
+        warn("http_post: perform request failed: %s", curl_easy_strerror(ret));
     }
 
     return result;

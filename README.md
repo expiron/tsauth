@@ -31,7 +31,7 @@ tsauth --help
 ```
 # Usage
 ```
-TsinghuaAuth v0.3.5
+TsinghuaAuth v0.4.2
 
     A tiny client for Tsinghua network AAA system
 
@@ -41,8 +41,6 @@ Usage:
     tsauth [OPTIONS] --logout [-d <IP>] -u <username>
 
 Options:
-    -4, --ipv4                     Authorize IPv4 network only
-    -6, --ipv6                     Authorize IPv6 network only
     -d, --addr <IP address>        Specify the IP address to authorize
         --http                     Use HTTP for requests instead of HTTPS
         --inside                   Authorize campus internal network only
@@ -50,7 +48,6 @@ Options:
     -o, --logout                   Perform logout operation
     -u, --username <username>      Tsinghua username or ID number
     -p, --password <plaintext>     Password in plaintext
-    -s, --status                   Show current status
     -t, --timeout <seconds>        Timeout of each request (default: 1)
     -v, --verbose                  Show detailed information
     -h, -?, --help                 Show usage and quit
@@ -65,10 +62,6 @@ tsauth [--login] -u username -p password
 ```bash
 tsauth -u username -p password --inside
 ```
-- Authentication only for IPv6(IPv4)
-```bash
-tsauth -u username -p password --ipv6(--ipv4)
-```
 - Authentication for specified IP address
 ```bash
 tsauth -d ip -u username -p password
@@ -81,11 +74,7 @@ tsauth -ou username
 ```bash
 tsauth -ou username -d ip
 ```
-- Show current logon status
-```bash
-tsauth --status
-```
 # Limitation
-- `--ipv4`, `--ipv6` options don't work when `-d` option is specified. Only the IP address specified will be sent to auth server. `tsauth` can't find any IPv4(v6) address associates with the specified address.
-But when specifies `--ipv4` and `--ipv6` at the same time, the IP address specified will be authenticated in double-stack mode.
+- It seems that all the IPs will be authenticated in double-stack mode.
+`--ipv4`, `--ipv6` options are deprecated.
 - `tsauth` doesn't work in the networks using `net.tsinghua.edu.cn` for authentication. As `net.tsinghua.edu.cn` will be deprecated in the future, `tsauth` doesn't implement this feature.

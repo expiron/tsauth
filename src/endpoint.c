@@ -15,8 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_URL_LEN (1024)
-#define MAX_BUF_LEN (512)
+#define MAX_BUF_LEN (1024)
 
 tsauth_info *tsauth_init(char *userid, char *passwd, char *ip, int login_inside)
 {
@@ -45,9 +44,6 @@ tsauth_info *tsauth_init(char *userid, char *passwd, char *ip, int login_inside)
 
 void tsauth_cleanup(tsauth_info *info)
 {
-    // clean up curl
-    http_cleanup();
-
     if (!info)
         return;
 
@@ -67,7 +63,7 @@ static inline json_object *extract_jsonp_response(char *src)
     char *p = strrchr(src, ')');
     char *q = strchr(src, '(');
     if (!p || !q)
-        warn("JSON data is broken");
+        warn("extract_jsonp_response: JSON data is broken");
     else
         *p = '\0';
     return json_tokener_parse(q + 1);
@@ -91,7 +87,7 @@ int get_acid(tsauth_info *info)
     {
         regex_t reg;
         regmatch_t pmatch[3];
-        _cleanup_free_ char *html = http_get("http://" NET_BASE_URL);
+        _cleanup_free_ char *html = http_get("http://" NET_BASE_HOST);
         regcomp(&reg, "href=\"http://auth4.tsinghua.edu.cn/index_([0-9]+).html\"", REG_EXTENDED);
         if (REG_NOERROR == regexec(&reg, html, 3, pmatch, 0))
         {
@@ -100,26 +96,20 @@ int get_acid(tsauth_info *info)
             strcpy(info->acid, html + pmatch[1].rm_so);
         }
         else
-        {
-            warn("[ACID] regex failed!");
-            return TSAUTH_ERROR_REGEX_FAILED;
-        }
+            return TSAUTH_ERROR_NO_MATCHES;
     }
     else
     {
-        _cleanup_free_ char *form = xmalloc(MAX_BUFFER_SIZE);
-        snprintf(form, MAX_BUFFER_SIZE, "actionType=searchNasId&ip=%s", info->ip);
-        char *acid = http_postform(USEREG_BASE_URL "/ip_login_import.php", form);
+        _cleanup_free_ char *form = xmalloc(MAX_BUF_LEN);
+        snprintf(form, MAX_BUF_LEN, "actionType=searchNasId&ip=%s", info->ip);
+        _cleanup_free_ char *acid = http_post(USEREG_BASE_HOST "/ip_login_import.php", form);
         if (0 != strcmp(acid, "fail"))
         {
             info->acid = xmalloc(strlen(acid) + 1);
             strcpy(info->acid, acid);
         }
         else
-        {
-            warn("[ACID] get failed!");
-            return TSAUTH_ERROR_REGEX_FAILED;
-        }
+            return TSAUTH_ERROR_RES_FAIL;
     }
     return TSAUTH_OK;
 }
@@ -131,10 +121,10 @@ int get_challenge(tsauth_info *info)
     if (!(info->userid))
         return TSAUTH_ERROR_NULL_USERID;
 
-    _cleanup_free_ char *url = xmalloc(MAX_URL_LEN);
+    _cleanup_free_ char *url = xmalloc(MAX_BUF_LEN);
     int result = TSAUTH_OK;
 
-    snprintf(url, MAX_URL_LEN,
+    snprintf(url, MAX_BUF_LEN,
              AUTH_BASE_ENDPOINT "/get_challenge?callback=tsauth"
                                 "&username=%s"
                                 "&ip=%s"
@@ -176,21 +166,21 @@ static inline void generate_info(tsauth_info *info, int login)
     json_object_object_add(obj, "acid", json_object_new_int(atoi(info->acid)));
     json_object_object_add(obj, "enc_ver", json_object_new_string("srun_bx1"));
     const char *json = json_object_to_json_string(obj);
-    verbose("JSON String: %s", json);
+    verbose("generate_info: JSON string: %s", json);
     size_t len = strlen(json);
     unsigned char buf1[MAX_BUF_LEN], buf2[MAX_BUF_LEN];
     size_t dlen = 0;
 
     if (xencode(buf1, MAX_BUF_LEN, &dlen, json, len, info->token, strlen(info->token)))
-        warn("call xencode failed");
+        warn("generate_info: xencode failed");
     if (base64_encode(buf2, MAX_BUF_LEN, &dlen, buf1, dlen))
-        warn("call base64_encode failed");
+        warn("generate_info: base64_encode failed");
 
     info->info = (char *)xrealloc(info->info, dlen + 8);
     strcpy(info->info, "{SRBX1}");
     strcat(info->info, buf2);
 
-    verbose("Generated info: %s", info->info);
+    verbose("generate_info: generated info: %s", info->info);
     json_object_put(obj);
 }
 
@@ -204,14 +194,13 @@ static inline void generate_hmd5(tsauth_info *info)
                     strlen(info->passwd),
                     digest);
 
-    if (bytes_to_hex(&info->hmd5, digest, 16))
-        warn("call bytes_to_hex failed");
+    bytes_to_hex(&info->hmd5, digest, 16);
     info->password = xrealloc(info->password, 5 + 32 + 1);
     strcpy(info->password, "{MD5}");
     strcat(info->password, info->hmd5);
 
-    verbose("Calculated hmd5: %s", info->hmd5);
-    verbose("Calculated password: %s", info->password);
+    verbose("generate_hmd5: hmd5: %s", info->hmd5);
+    verbose("generate_hmd5: password: %s", info->password);
 }
 
 static inline void generate_chksum(tsauth_info *info, int login)
@@ -238,21 +227,20 @@ static inline void generate_chksum(tsauth_info *info, int login)
     mbedtls_md_update(&ctx, info->ip, strlen(info->ip));
 
     mbedtls_md_update(&ctx, info->token, strlen(info->token));
-    mbedtls_md_update(&ctx, "200", 3);
+    mbedtls_md_update(&ctx, "200", 3); // n = 200
 
     mbedtls_md_update(&ctx, info->token, strlen(info->token));
-    mbedtls_md_update(&ctx, "1", 1);
+    mbedtls_md_update(&ctx, "1", 1); // type = 1
 
     mbedtls_md_update(&ctx, info->token, strlen(info->token));
     mbedtls_md_update(&ctx, info->info, strlen(info->info));
 
     mbedtls_md_finish(&ctx, digest);
-    if (bytes_to_hex(&info->chksum, digest, 20))
-        warn("call bytes_to_hex failed");
+    bytes_to_hex(&info->chksum, digest, 20);
 
     mbedtls_md_free(&ctx);
 
-    verbose("Calculated chksum: %s", info->chksum);
+    verbose("generate_chksum: chksum: %s", info->chksum);
 }
 
 #define escape(x) curl_easy_escape(curl, x, strlen(x))
@@ -270,27 +258,27 @@ int tsauth_login(tsauth_info *info)
     int result = get_acid(info);
     if (TSAUTH_OK != result)
     {
-        warn("get_acid failed: %s", tsauth_strcode(result));
+        warn("get_acid: %s", tsauth_strcode(result));
         return TSAUTH_ERROR_CHALLENGE_FAILED;
     }
     result = get_challenge(info);
     if (TSAUTH_OK != result)
     {
-        warn("get_challenge failed: %s", tsauth_strcode(result));
+        warn("get_challenge: %s", tsauth_strcode(result));
         return TSAUTH_ERROR_CHALLENGE_FAILED;
     }
     generate_info(info, 1);
     generate_hmd5(info);
     generate_chksum(info, 1);
 
-    _cleanup_free_ char *url = xmalloc(MAX_URL_LEN);
+    _cleanup_free_ char *url = xmalloc(MAX_BUF_LEN);
 
     _cleanup_curl_free_ char *userid = escape(info->userid);
     _cleanup_curl_free_ char *password = escape(info->password);
     _cleanup_curl_free_ char *pinfo = escape(info->info);
     _cleanup_curl_free_ char *chksum = escape(info->chksum);
 
-    snprintf(url, MAX_URL_LEN,
+    snprintf(url, MAX_BUF_LEN,
              AUTH_BASE_ENDPOINT "/srun_portal?callback=tsauth&action=login"
                                 "&username=%s"
                                 "&password=%s"
@@ -310,6 +298,7 @@ int tsauth_login(tsauth_info *info)
     _cleanup_free_ char *res = http_get(url);
     _cleanup_free_ char *success_msg = NULL;
     _cleanup_free_ char *error = NULL;
+    _cleanup_free_ char *error_msg = NULL;
 
     if (res)
     {
@@ -319,13 +308,14 @@ int tsauth_login(tsauth_info *info)
         {
             update_info_from_json(&success_msg, "suc_msg", &iter);
             update_info_from_json(&error, "error", &iter);
+            update_info_from_json(&error_msg, "error_msg", &iter);
             if (0 == strcmp(iter.key, "ecode") && 0 != json_object_get_int(iter.val))
                 result = json_object_get_int(iter.val);
         }
         if (TSAUTH_OK == result && success_msg)
             message("Login successfully: %s", success_msg);
         else
-            warn("Login failed: %s", error);
+            warn("Login failed: %s", error_msg);
         json_object_put(data);
     }
     else
@@ -342,28 +332,28 @@ int tsauth_logout(tsauth_info *info)
     if (!info->userid)
         return TSAUTH_ERROR_NULL_USERID;
 
-    int result = get_acid(info);
+    // set ac_id = 1
+    if (info->acid)
+        tsauth_info_cleanup(info->acid);
+    info->acid = xmalloc(2);
+    strcpy(info->acid, "1");
+
+    int result = get_challenge(info);
     if (TSAUTH_OK != result)
     {
-        warn("get_acid failed: %s", tsauth_strcode(result));
-        return TSAUTH_ERROR_CHALLENGE_FAILED;
-    }
-    result = get_challenge(info);
-    if (TSAUTH_OK != result)
-    {
-        warn("get_challenge failed: %s", tsauth_strcode(result));
+        warn("get_challenge: %s", tsauth_strcode(result));
         return TSAUTH_ERROR_CHALLENGE_FAILED;
     }
     generate_info(info, 0);
     generate_chksum(info, 0);
 
-    _cleanup_free_ char *url = xmalloc(MAX_URL_LEN);
+    _cleanup_free_ char *url = xmalloc(MAX_BUF_LEN);
 
     _cleanup_curl_free_ char *userid = escape(info->userid);
     _cleanup_curl_free_ char *pinfo = escape(info->info);
     _cleanup_curl_free_ char *chksum = escape(info->chksum);
 
-    snprintf(url, MAX_URL_LEN,
+    snprintf(url, MAX_BUF_LEN,
              AUTH_BASE_ENDPOINT "/srun_portal?callback=tsauth&action=logout"
                                 "&username=%s"
                                 "&ac_id=%s"
@@ -383,6 +373,7 @@ int tsauth_logout(tsauth_info *info)
 
     _cleanup_free_ char *success_msg = NULL;
     _cleanup_free_ char *error = NULL;
+    _cleanup_free_ char *error_msg = NULL;
 
     if (res)
     {
@@ -391,8 +382,9 @@ int tsauth_logout(tsauth_info *info)
 
         json_object_object_foreachC(data, iter)
         {
-            update_info_from_json(&success_msg, "suc_msg", &iter);
+            update_info_from_json(&success_msg, "res", &iter);
             update_info_from_json(&error, "error", &iter);
+            update_info_from_json(&error_msg, "error_msg", &iter);
             if (0 == strcmp(iter.key, "ecode") && 0 != json_object_get_int(iter.val))
                 result = json_object_get_int(iter.val);
         }
@@ -402,7 +394,7 @@ int tsauth_logout(tsauth_info *info)
         if (TSAUTH_OK == result)
             message("Logout successfully: %s", success_msg);
         else
-            warn("Logout failed: %s", error);
+            warn("Logout failed: %s", error_msg);
 
         json_object_put(data);
     }
@@ -412,16 +404,6 @@ int tsauth_logout(tsauth_info *info)
     return result;
 }
 
-int tsauth_status()
-{
-    _cleanup_free_ char *ipv4 = get_ipv4();
-    _cleanup_free_ char *ipv6 = get_ipv6();
-    message("IPv4: %s, IPv6: %s", ipv4, ipv6);
-    _cleanup_free_ char *ruinfo = get_rad_user_info();
-    message("Rad_User_Info: %s", ruinfo);
-    return TSAUTH_OK;
-}
-
 static char error_string[32] = {0};
 
 const char *tsauth_strcode(int code)
@@ -429,29 +411,32 @@ const char *tsauth_strcode(int code)
     switch (code)
     {
     case TSAUTH_ERROR_NULL_INFO:
-        return "Auth info NULL ptr";
+        return "tsauth_info NULL ptr";
         break;
     case TSAUTH_ERROR_NULL_USERID:
-        return "Username missed";
+        return "username missed";
         break;
     case TSAUTH_ERROR_NULL_PASSWD:
-        return "Password missed";
+        return "password missed";
         break;
     case TSAUTH_ERROR_CHALLENGE_FAILED:
-        return "Get challenge failed";
+        return "get_challenge failed";
         break;
     case TSAUTH_ERROR_NO_RESPONSE:
-        return "Server no response or timeout";
+        return "server no response or timeout";
         break;
     case TSAUTH_ERROR_LOGOUT_FAILED:
-        return "Logout failed";
+        return "logout failed";
         break;
-    case TSAUTH_ERROR_REGEX_FAILED:
-        return "ACID failed";
+    case TSAUTH_ERROR_NO_MATCHES:
+        return "response has no matches";
+        break;
+    case TSAUTH_ERROR_RES_FAIL:
+        return "response fail";
         break;
 
     default:
-        snprintf(error_string, 32, "Unknown code - %d", code);
+        snprintf(error_string, 32, "unknown code - %d", code);
         return error_string;
     }
     return "";
