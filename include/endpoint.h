@@ -9,6 +9,8 @@
 #define ENDPOINT_USER_INFO  "auth4.tsinghua.edu.cn/rad_user_info.php"
 #define ENDPOINT_GET_IPV4   "http://118.229.2.198/getip.php"
 #define ENDPOINT_GET_IPV6   "http://[2402:f000:0:2c4::198]/getip.php"
+#define NET_BASE_URL        "net.tsinghua.edu.cn"
+#define USEREG_BASE_URL     "usereg.tsinghua.edu.cn"
 
 #define TSAUTH_OK                       (0)
 #define TSAUTH_ERROR_NULL_INFO          (-1)
@@ -17,6 +19,7 @@
 #define TSAUTH_ERROR_CHALLENGE_FAILED   (-4)
 #define TSAUTH_ERROR_NO_RESPONSE        (-5)
 #define TSAUTH_ERROR_LOGOUT_FAILED      (-6)
+#define TSAUTH_ERROR_REGEX_FAILED       (-7)
 
 struct tsauth_info_t
 {
@@ -24,6 +27,7 @@ struct tsauth_info_t
     char *passwd;
     char *ip;
     int double_stack;
+    char *acid;
     char *token;
     char *hmd5;
     char *password;
@@ -40,6 +44,8 @@ typedef struct tsauth_info_t tsauth_info;
 tsauth_info *tsauth_init(char *userid, char *passwd, char *ip, int login_inside);
 int tsauth_login(tsauth_info *info);
 int tsauth_logout(tsauth_info *info);
+int tsauth_netin(tsauth_info *info);
+int tsauth_netout(tsauth_info *info);
 int tsauth_status();
 void tsauth_cleanup(tsauth_info *info);
 const char *tsauth_strcode(int code);

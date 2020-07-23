@@ -73,7 +73,10 @@ char *http_get(const char *url)
 
     ret = curl_easy_perform(curl);
     if (CURLE_OK == ret)
+    {
         result = res.ptr;
+        verbose("[HTTP] Res %s", result);
+    }
     else
     {
         res.len = 0;
@@ -82,7 +85,40 @@ char *http_get(const char *url)
         warn("Perform request failed: %s", curl_easy_strerror(ret));
     }
 
-    verbose("[HTTP] Res %s", result);
+    return result;
+}
+
+char *http_postform(const char *url, const char *form)
+{
+    if (!url)
+        return NULL;
+
+    struct mem_chunk res;
+    CURLcode ret;
+    char *result = NULL;
+
+    memset(&res, 0, sizeof(res));
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    // curl_easy_setopt(curl, CURLOPT_POST, 1);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, form);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &res);
+    verbose("[HTTP] POST %s", url);
+    verbose("[HTTP] FORM %s", form);
+
+    ret = curl_easy_perform(curl);
+    if (CURLE_OK == ret)
+    {
+        result = res.ptr;
+        verbose("[HTTP] Res %s", result);
+    }
+    else
+    {
+        res.len = 0;
+        free(res.ptr);
+        res.ptr = NULL;
+        warn("Perform request failed: %s", curl_easy_strerror(ret));
+    }
+
     return result;
 }
 

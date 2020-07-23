@@ -3,34 +3,155 @@
 ###################################          SHA256SUMS          ###################################
 ####################################################################################################
 
-09fa0233a0410eb696b1838919dc93827f3ac274affe7f7de4e331e94ba65a2e  01-auth-srun_portal_pc.php
+68b90be663ef6d444654c32b6632cfb274a968b694389968844c49ce731ee202  01-auth-srun_portal_pc.php
 e6f6c8d257e9116789f906306f3591589e24851061b1026ca80a466d05e0ad3d  02-auth-hashes.min.js
-3be1b344d375be4d0dcd0fa73460807ce9621e450c1f6c95e45287ebd1c35ddb  03-auth-portal.main.min.js
+96d935776770a64a5fbcbcaff1d77cfa8aabe59a32f33ebcf52b39b4c5d66ec1  03-auth-portal.main.min.js
 7d607a2e094d70cf42c7a06b8a649f64e7ffb06647e5530311fb606170ab2d69  04-auth-md5.js
 4fed0ef3e302fa2bf327feb6ab708195b6779b40703c692140382d9944c946e8  05-usrg-login.php
-a5c44e583014ef6dcbb77120296de40801229b8a85ccae1a3535dd6b5b802d18  06-usrg-ip_login_import.php
+51ff0d2ead5cee943addfd3c09fd61e8aa35a5d0f2d1955e0147006e27f19914  06-usrg-ip_login_import.php
 bc65998031ea0355e2e200e1407883e8558c7e46b7b9c0f2237994dbc4ae03f4  07-usrg-portal.main.min.js
 
 ####################################################################################################
 ###########################          01-auth-srun_portal_pc.php          ###########################
 ####################################################################################################
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="expires" content="0">
-<meta http-equiv="cache-control" content="no-store">
-<meta http-equiv="pragma" content="no-cache">
-<script language="javascript">
-var p=/\/index_([\d]+).html/;
-var arr=p.exec(document.location);
-if(arr[1])
-{
-    location="ac_detect.php?"+"ac_id="+arr[1]+"&"+document.location.search.substring(1);
-}
-</script>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
+<title>清华大学校园网(IPv6)&nbsp;Tsinghua&nbsp;University&nbsp;Network</title>
+
+<link rel="stylesheet" type="text/css" href="css/styles_wired.css" />
+
+<link rel="shortcut icon"
+href="http://net.tsinghua.edu.cn/image/icon16-purple.ico" type="image/x-icon" />
+<link rel="icon" href="http://net.tsinghua.edu.cn/image/icon32.png"  sizes="32x32" type="image/png" />
+<script type="text/javascript" src="/script/md5.js"></script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script language="javascript" src="js/portal.main.min.js?v=1.05"></script>
+<script language="javascript" src="js/hashes.min.js"></script>
+    <style>
+        .f-img{
+            float: right;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .f-img img{
+            width: 100px;
+            height: 100px;
+        }
+        .f-img p{
+            font-size:12px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            color:#6E6F6F;
+        }
+    </style>
 </head>
+
+<body>
+    <div id="center">
+        <div id="head">
+            <a id="title" href="" title="清华大学校园网&#10;Tsinghua University Network"></a>
+        </div>
+      <div class="f-img">
+          <img src="/images/qr.jpg"/>
+          <p>欢迎关注"清华大学信息服务"</p>
+      </div>
+        <div id="content">
+            <div class="greet">您好，&nbsp;Hello,</div>
+            <div class="triangle_greet"></div>
+            <div id="notice_box">
+                <div class="corner"></div>
+                <div id="notice"><p>&nbsp;<br/><br/>&nbsp;</p>
+                    <div width="320" align="center">
+                        <marquee onmouseover="this.stop()" onmouseout="this.start()" scrollAmount="1.0" width="300"
+                                 align="left" height="90" direction="up" border="0" id="msg" style="color:white;">注销联网请在认证成功后弹出的页面点击“断开连接”按钮，关闭浏览器或者关机不会导致您直接下线，由此您的IP地址可能会被冒用从而产生的流量将会统计到您的账号上，推荐使用客户端认证。
+</marquee>
+                    </div>
+                </div>
+            </div>
+
+            <div id="login">
+                    <form name="form2" id="form2" action="srun_portal_pc.php?" method="post">
+                        <input type="hidden" name="action" value="login">
+                        <input type="hidden" id="ac_id" name="ac_id" value="0">
+                        <input type="hidden" id="ipv6" name="ipv6" value="">
+                        <input type="hidden" id="user_ip" name="user_ip" value="2402:f000:4:1:808::995">
+                        <input type="hidden" id="nas_ip" name="nas_ip" value="">
+                        <input type="hidden" id="user_mac" name="user_mac" value="">
+                        <input type="hidden" id="url" name="url" value="">
+                    <label>
+                        <div class="label_text">用户名<p class="english">User&nbsp;ID</p></div>
+                        <input type="text" name="username" id="username" value="" autocorrect="off" autocapitalize="off" onfocus="hidden_account()">
+                        <div class="instruction" id="account">校园网账户<p class="english">Account&nbsp;of&nbsp;Tsinghua&nbsp;University&nbsp;Network</div>
+                    </label>
+                  <label>
+                    <div class="label_text">密码<p class="english">Password</p></div>
+                    <input type="password" name="password" id="password" autocorrect="off" autocapitalize="off">
+                  </label>
+                        <label id="remember" style="margin-left: 46px;">
+                            <input type="checkbox" name="save_me" id="cookie" value="yes" checked>
+                            <div class="checkbox_text" style="color: #93278f;font-weight: 600;">访问校外（IPv4）网络<p class="english">Access to the Internet</p><p class="english">(IPv4)</p></div>
+                        </label>
+                    <a id="account" href="https://usereg.tsinghua.edu.cn" target="__blank" title="自服务&#10;Account&nbsp;Settings">自服务
+                    <p class="english">Account&nbsp;Settings</p></a>
+                                      <input type="submit" class="connect" name="connect" id="connect" value="连接&nbsp;Contect">
+                   </form>
+            </div>
+            <div class="triangle_login"></div>
+            <div id="download">
+                <ul id="system">
+                  <li><a class="windows" href="http://its.tsinghua.edu.cn/info/khdxz/1844" title="Windows">Windows</a></li>
+                  <!--li><a class="windows" href="files/TunetZRRZ.zip" title="Windows">Windows</a></li>
+                  <li><a class="mac" href="files/TUNet_mac_os_x86.zip" title="MacOS">MacOS</a></li>
+                  <li><a class="linux" href="files/TUNet_linux.tar.gz" title="Linux">Linux</a></li>
+                  <li><a class="android" href="files/TUNet.apk" title="Android">Android</a></li>
+                  <li><a class="ios" href="files/TUNet_IOS.zip" title="iOS">iOS</a></li>-->
+                  <li><a class="mac" href="#" title="MacOS">MacOS</a></li>
+                  <li><a class="linux" href="files/Tunet_linuxZRRZ.zip" title="Linux">Linux</a></li>
+                  <li><a class="android" href="#" title="Android">Android</a></li>
+                  <li><a class="ios" href="#" title="iOS">iOS</a></li>
+                </ul>
+            </div>
+            <ul id="widget">
+                <li class="bookmark"><a href="javascript:addBookmark('网关认证',document.location)" title="收藏&#10;Bookmark&nbsp;This&nbsp;Page">收藏<p class="english">Bookmark&nbsp;This&nbsp;Page</p></a></li>
+                <li class="help"><a href="#" title="帮助&#10;Help">帮助<p class="english">Help</p></a></li>
+                <li class="contact">
+                <div class="title">联系<p class="english">Contact</p></div>
+                <div class="detail english">+86-10-62784859<a href="mailto:its@tsinghua.edu.cn" title="电子邮件&#10;Email">its@tsinghua.edu.cn</a></div></li>
+            </ul>
+        </div>
+        <div id="foot">清华大学信息化技术中心<p class="english">Information Technology Center of Tsinghua University</p></div>
+
+    </div>
+<script language="javascript">
+function hidden_account()
+{
+    document.getElementById("account").style.display="none";
+}
+var off_campus = $.cookie("off_campus");
+if (off_campus == "off"){
+    $("#cookie").attr("checked", false);
+}
+function newXMLHttpRequest() {
+    return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+}
+// Synchronous POST request.
+function post(url, data) {
+    var req = newXMLHttpRequest();
+    req.open('POST', url, false);
+    req.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    req.send(data);
+    return req.responseText;
+}
+//var ipv6 = post('http://[2402:f000:0:2c4::198]/getip.php');
+//$("#ipv6").val(ipv6);
+//var user_ip= post('http://118.229.2.198/getip.php');
+//$("#user_ip").val(user_ip);
+</script>
 </body>
 </html>
 
@@ -325,19 +446,28 @@ $(function() {
                 //     window.open('','_self');
                 //     window.close();
                 // }
-                alert("下线成功(Logoff Success)");
+                //alert("下线成功(Logoff Success)");
                 //location.href = location.protocol + "//" + location.hostname + "?noforward=1";
-                window.setTimeout("window.location='http://info.tsinghua.edu.cn/'",2000);
+                //window.setTimeout("window.location='http://info.tsinghua.edu.cn/'",2000);
                 return false;
-            }
-            for (var i in PortalError) {
-                if (data.error_msg.indexOf(i) >= 0) {
-                    alert(PortalError[i]);
-                    return false;
+            } else if(data.error_msg == "You are not online.") {
+                if(location.hostname == 'auth4.tsinghua.edu.cn') {
+                    $.getJSON(location.protocol + "//" + "auth6.tsinghua.edu.cn" + "/cgi-bin/srun_portal", pData, function(info) {});
+                } else {
+                    $.getJSON(location.protocol + "//" + "auth4.tsinghua.edu.cn" + "/cgi-bin/srun_portal", pData, function (info) {});
                 }
             }
-            alert(data.error_msg);
+            alert("下线成功(Logoff Success)");
+            window.setTimeout("window.location='http://info.tsinghua.edu.cn/'",2000);
             return false;
+            //for (var i in PortalError) {
+            //    if (data.error_msg.indexOf(i) >= 0) {
+            //        alert(PortalError[i]);
+             //       return false;
+             //   }
+            //}
+           // alert(data.error_msg);
+           // return false;
         });
 
         return false;
@@ -1120,7 +1250,7 @@ function checkIp(){
                     <input type="hidden" name="action" value="do_login">
                     <input type="hidden" id="username" value="">
                     <tr>
-                        <td width=80>IP</td>
+                        <td width=80>IPv4/IPv6</td>
                         <td>
                             <input type="text" width=100 id="user_ip" value="" auto_complete="off">
                         </td>
