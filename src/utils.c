@@ -83,7 +83,6 @@ _noreturn_ void die_usage()
         "TsinghuaAuth v" TSAUTH_VERSION /* "-" TSAUTH_GIT_COMMIT_ID */ "\n\n"
         "    A tiny client for Tsinghua network AAA system\n\n"
         "Usage:\n"
-        "    tsauth [OPTIONS] --status\n"
         "    tsauth [OPTIONS] [--login] [-d <IP>] -u <username> -p <password>\n"
         "    tsauth [OPTIONS] --logout [-d <IP>] -u <username>\n\n"
         "Options:\n"

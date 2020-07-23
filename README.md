@@ -36,7 +36,6 @@ TsinghuaAuth v0.4.2
     A tiny client for Tsinghua network AAA system
 
 Usage:
-    tsauth [OPTIONS] --status
     tsauth [OPTIONS] [--login] [-d <IP>] -u <username> -p <password>
     tsauth [OPTIONS] --logout [-d <IP>] -u <username>
 
