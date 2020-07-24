@@ -3,7 +3,7 @@
 ###################################          SHA256SUMS          ###################################
 ####################################################################################################
 
-68b90be663ef6d444654c32b6632cfb274a968b694389968844c49ce731ee202  01-auth-srun_portal_pc.php
+bef274876cbc0a511bf03250a8427f0748812a671aa6fe926d609464c5152f1c  01-auth-srun_portal_pc.php
 e6f6c8d257e9116789f906306f3591589e24851061b1026ca80a466d05e0ad3d  02-auth-hashes.min.js
 96d935776770a64a5fbcbcaff1d77cfa8aabe59a32f33ebcf52b39b4c5d66ec1  03-auth-portal.main.min.js
 7d607a2e094d70cf42c7a06b8a649f64e7ffb06647e5530311fb606170ab2d69  04-auth-md5.js
@@ -104,8 +104,8 @@ href="http://net.tsinghua.edu.cn/image/icon16-purple.ico" type="image/x-icon" />
             <div class="triangle_login"></div>
             <div id="download">
                 <ul id="system">
-                  <li><a class="windows" href="http://its.tsinghua.edu.cn/info/khdxz/1844" title="Windows">Windows</a></li>
-                  <!--li><a class="windows" href="files/TunetZRRZ.zip" title="Windows">Windows</a></li>
+                        <li><a class="windows" href="http://its.tsinghua.edu.cn/info/khdxz/1844" title="Windows">Windows</a></li>
+                    <!--li><a class="windows" href="files/TunetZRRZ.zip" title="Windows">Windows</a></li>
                   <li><a class="mac" href="files/TUNet_mac_os_x86.zip" title="MacOS">MacOS</a></li>
                   <li><a class="linux" href="files/TUNet_linux.tar.gz" title="Linux">Linux</a></li>
                   <li><a class="android" href="files/TUNet.apk" title="Android">Android</a></li>

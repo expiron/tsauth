@@ -31,7 +31,7 @@ tsauth --help
 ```
 # Usage
 ```
-TsinghuaAuth v0.4.2
+TsinghuaAuth v0.4.4
 
     A tiny client for Tsinghua network AAA system
 

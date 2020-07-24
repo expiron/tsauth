@@ -89,7 +89,7 @@ int get_acid(tsauth_info *info)
         regmatch_t pmatch[3];
         _cleanup_free_ char *html = http_get("http://" NET_BASE_HOST);
         regcomp(&reg, "href=\"http://auth4.tsinghua.edu.cn/index_([0-9]+).html\"", REG_EXTENDED);
-        if (REG_NOERROR == regexec(&reg, html, 3, pmatch, 0))
+        if (0 == regexec(&reg, html, 3, pmatch, 0))
         {
             info->acid = xmalloc(pmatch[1].rm_eo - pmatch[1].rm_so + 1);
             *(html + pmatch[1].rm_eo) = 0;
