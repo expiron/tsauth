@@ -7,36 +7,35 @@ A tiny client for Tsinghua network AAA (Authentication, Authorization, Accountin
 - ## Ubuntu 18.04
 1. Install dependencies
 ```bash
-sudo apt-get update
-sudo apt-get install build-essential cmake
-sudo apt-get install libmbedtls-dev libcurl4-openssl-dev libjson-c-dev
+$ sudo apt-get update
+$ sudo apt-get install build-essential cmake
+$ sudo apt-get install libmbedtls-dev libcurl4-openssl-dev libjson-c-dev
 ```
 2. Clone sources
 ```bash
-git clone https://github.com/expiron/tsauth.git
+$ git clone https://github.com/expiron/tsauth.git
 ```
 3. Build
 ```bash
-mkdir -p tsauth/build && cd tsauth/build
-cmake ..
-make -j 1 V=sc
+$ mkdir -p tsauth/build && cd tsauth/build
+$ cmake ..
+$ make -j 1 V=sc
 ```
 4. Install to `/usr/local/bin`
 ```bash
-sudo make install
+$ sudo make install
 ```
 5. Enjoy it
 ```bash
-tsauth --help
-```
-# Usage
-```
-TsinghuaAuth v0.4.4
+$ tsauth --help
+
+TsinghuaAuth v0.5.1
 
     A tiny client for Tsinghua network AAA system
 
 Usage:
-    tsauth [OPTIONS] [--login] [-d <IP>] -u <username> -p <password>
+    tsauth --status
+    tsauth [OPTIONS] [--login] [--net] [-d <IP>] -u <username> -p <password>
     tsauth [OPTIONS] --logout [-d <IP>] -u <username>
 
 Options:
@@ -45,35 +44,44 @@ Options:
         --inside                   Authorize campus internal network only
     -i, --login                    Perform login operation (default)
     -o, --logout                   Perform logout operation
+    -n, --net                      Perform request to net.tsinghua.edu.cn
     -u, --username <username>      Tsinghua username or ID number
     -p, --password <plaintext>     Password in plaintext
+    -s, --status                   Show native network status
     -t, --timeout <seconds>        Timeout of each request (default: 1)
     -v, --verbose                  Show detailed information
     -h, -?, --help                 Show usage and quit
         --version                  Show version string and quit
 ```
-## Examples
+## Usage Examples
+- Show native network status (remote address not supported)
+```base
+$ tsauth --status
+```
 - Authentication for current device
 ```bash
-tsauth [--login] -u username -p password
+$ tsauth [--login] -u username -p password
 ```
 - Authentication only for campus internal network
 ```bash
-tsauth -u username -p password --inside
+$ tsauth -u username -p password --inside
 ```
 - Authentication for specified IP address
 ```bash
-tsauth -d ip -u username -p password
+$ tsauth -d ip -u username -p password
+```
+- Login net.tsinghua.edu.cn
+```base
+$ tsauth --net -u username -p password
 ```
 - Logout
 ```bash
-tsauth -ou username
+$ tsauth -ou username
 ```
 - Logout for specified IP address
 ```bash
-tsauth -ou username -d ip
+$ tsauth -ou username -d ip
 ```
 # Limitation
 - It seems that all the IPs will be authenticated in double-stack mode.
 `--ipv4`, `--ipv6` options are deprecated.
-- `tsauth` doesn't work in the networks using `net.tsinghua.edu.cn` for authentication. As `net.tsinghua.edu.cn` will be deprecated in the future, `tsauth` doesn't implement this feature.
