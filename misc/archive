@@ -3,155 +3,39 @@
 ###################################          SHA256SUMS          ###################################
 ####################################################################################################
 
-bef274876cbc0a511bf03250a8427f0748812a671aa6fe926d609464c5152f1c  01-auth-srun_portal_pc.php
+09fa0233a0410eb696b1838919dc93827f3ac274affe7f7de4e331e94ba65a2e  01-auth-srun_portal_pc.php
 e6f6c8d257e9116789f906306f3591589e24851061b1026ca80a466d05e0ad3d  02-auth-hashes.min.js
 96d935776770a64a5fbcbcaff1d77cfa8aabe59a32f33ebcf52b39b4c5d66ec1  03-auth-portal.main.min.js
 7d607a2e094d70cf42c7a06b8a649f64e7ffb06647e5530311fb606170ab2d69  04-auth-md5.js
 4fed0ef3e302fa2bf327feb6ab708195b6779b40703c692140382d9944c946e8  05-usrg-login.php
 51ff0d2ead5cee943addfd3c09fd61e8aa35a5d0f2d1955e0147006e27f19914  06-usrg-ip_login_import.php
 bc65998031ea0355e2e200e1407883e8558c7e46b7b9c0f2237994dbc4ae03f4  07-usrg-portal.main.min.js
+2d5e50dcaaa5c8afa0d23bab38423cafedfb6bd1179cf100f8a50f5ecfc4ed31  08-net-wired.html
+6c3710c19cab71391ed94b36e79a89619edcc1f6bc767d89f0cc2c4aeee3d7fb  09-net-login.js
+5c76a4d3272186c90b715ded5f78641c64c74a361005a52c69b53db717e53ca5  10-net-md5.js
+c10bf0f8fc149294f01010ede544e1d247e21e86115288eabff96fc54a050da5  11-net-succeed.js
+d033607a42f5131c811ccc1f1d4daefe345e35ecd0d2115b703b01166865f0f1  12-net-util.js
 
 ####################################################################################################
 ###########################          01-auth-srun_portal_pc.php          ###########################
 ####################################################################################################
 
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
-<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
-<title>清华大学校园网(IPv6)&nbsp;Tsinghua&nbsp;University&nbsp;Network</title>
-
-<link rel="stylesheet" type="text/css" href="css/styles_wired.css" />
-
-<link rel="shortcut icon"
-href="http://net.tsinghua.edu.cn/image/icon16-purple.ico" type="image/x-icon" />
-<link rel="icon" href="http://net.tsinghua.edu.cn/image/icon32.png"  sizes="32x32" type="image/png" />
-<script type="text/javascript" src="/script/md5.js"></script>
-<script type="text/javascript" src="/js/jquery.min.js"></script>
-<script type="text/javascript" src="js/jquery.cookie.js"></script>
-<script language="javascript" src="js/portal.main.min.js?v=1.05"></script>
-<script language="javascript" src="js/hashes.min.js"></script>
-    <style>
-        .f-img{
-            float: right;
-            margin-top: 30px;
-            text-align: center;
-        }
-        .f-img img{
-            width: 100px;
-            height: 100px;
-        }
-        .f-img p{
-            font-size:12px;
-            margin-top: 10px;
-            margin-bottom: 20px;
-            color:#6E6F6F;
-        }
-    </style>
-</head>
-
-<body>
-    <div id="center">
-        <div id="head">
-            <a id="title" href="" title="清华大学校园网&#10;Tsinghua University Network"></a>
-        </div>
-      <div class="f-img">
-          <img src="/images/qr.jpg"/>
-          <p>欢迎关注"清华大学信息服务"</p>
-      </div>
-        <div id="content">
-            <div class="greet">您好，&nbsp;Hello,</div>
-            <div class="triangle_greet"></div>
-            <div id="notice_box">
-                <div class="corner"></div>
-                <div id="notice"><p>&nbsp;<br/><br/>&nbsp;</p>
-                    <div width="320" align="center">
-                        <marquee onmouseover="this.stop()" onmouseout="this.start()" scrollAmount="1.0" width="300"
-                                 align="left" height="90" direction="up" border="0" id="msg" style="color:white;">注销联网请在认证成功后弹出的页面点击“断开连接”按钮，关闭浏览器或者关机不会导致您直接下线，由此您的IP地址可能会被冒用从而产生的流量将会统计到您的账号上，推荐使用客户端认证。
-</marquee>
-                    </div>
-                </div>
-            </div>
-
-            <div id="login">
-                    <form name="form2" id="form2" action="srun_portal_pc.php?" method="post">
-                        <input type="hidden" name="action" value="login">
-                        <input type="hidden" id="ac_id" name="ac_id" value="0">
-                        <input type="hidden" id="ipv6" name="ipv6" value="">
-                        <input type="hidden" id="user_ip" name="user_ip" value="2402:f000:4:1:808::995">
-                        <input type="hidden" id="nas_ip" name="nas_ip" value="">
-                        <input type="hidden" id="user_mac" name="user_mac" value="">
-                        <input type="hidden" id="url" name="url" value="">
-                    <label>
-                        <div class="label_text">用户名<p class="english">User&nbsp;ID</p></div>
-                        <input type="text" name="username" id="username" value="" autocorrect="off" autocapitalize="off" onfocus="hidden_account()">
-                        <div class="instruction" id="account">校园网账户<p class="english">Account&nbsp;of&nbsp;Tsinghua&nbsp;University&nbsp;Network</div>
-                    </label>
-                  <label>
-                    <div class="label_text">密码<p class="english">Password</p></div>
-                    <input type="password" name="password" id="password" autocorrect="off" autocapitalize="off">
-                  </label>
-                        <label id="remember" style="margin-left: 46px;">
-                            <input type="checkbox" name="save_me" id="cookie" value="yes" checked>
-                            <div class="checkbox_text" style="color: #93278f;font-weight: 600;">访问校外（IPv4）网络<p class="english">Access to the Internet</p><p class="english">(IPv4)</p></div>
-                        </label>
-                    <a id="account" href="https://usereg.tsinghua.edu.cn" target="__blank" title="自服务&#10;Account&nbsp;Settings">自服务
-                    <p class="english">Account&nbsp;Settings</p></a>
-                                      <input type="submit" class="connect" name="connect" id="connect" value="连接&nbsp;Contect">
-                   </form>
-            </div>
-            <div class="triangle_login"></div>
-            <div id="download">
-                <ul id="system">
-                        <li><a class="windows" href="http://its.tsinghua.edu.cn/info/khdxz/1844" title="Windows">Windows</a></li>
-                    <!--li><a class="windows" href="files/TunetZRRZ.zip" title="Windows">Windows</a></li>
-                  <li><a class="mac" href="files/TUNet_mac_os_x86.zip" title="MacOS">MacOS</a></li>
-                  <li><a class="linux" href="files/TUNet_linux.tar.gz" title="Linux">Linux</a></li>
-                  <li><a class="android" href="files/TUNet.apk" title="Android">Android</a></li>
-                  <li><a class="ios" href="files/TUNet_IOS.zip" title="iOS">iOS</a></li>-->
-                  <li><a class="mac" href="#" title="MacOS">MacOS</a></li>
-                  <li><a class="linux" href="files/Tunet_linuxZRRZ.zip" title="Linux">Linux</a></li>
-                  <li><a class="android" href="#" title="Android">Android</a></li>
-                  <li><a class="ios" href="#" title="iOS">iOS</a></li>
-                </ul>
-            </div>
-            <ul id="widget">
-                <li class="bookmark"><a href="javascript:addBookmark('网关认证',document.location)" title="收藏&#10;Bookmark&nbsp;This&nbsp;Page">收藏<p class="english">Bookmark&nbsp;This&nbsp;Page</p></a></li>
-                <li class="help"><a href="#" title="帮助&#10;Help">帮助<p class="english">Help</p></a></li>
-                <li class="contact">
-                <div class="title">联系<p class="english">Contact</p></div>
-                <div class="detail english">+86-10-62784859<a href="mailto:its@tsinghua.edu.cn" title="电子邮件&#10;Email">its@tsinghua.edu.cn</a></div></li>
-            </ul>
-        </div>
-        <div id="foot">清华大学信息化技术中心<p class="english">Information Technology Center of Tsinghua University</p></div>
-
-    </div>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="cache-control" content="no-store">
+<meta http-equiv="pragma" content="no-cache">
 <script language="javascript">
-function hidden_account()
+var p=/\/index_([\d]+).html/;
+var arr=p.exec(document.location);
+if(arr[1])
 {
-    document.getElementById("account").style.display="none";
+    location="ac_detect.php?"+"ac_id="+arr[1]+"&"+document.location.search.substring(1);
 }
-var off_campus = $.cookie("off_campus");
-if (off_campus == "off"){
-    $("#cookie").attr("checked", false);
-}
-function newXMLHttpRequest() {
-    return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-}
-// Synchronous POST request.
-function post(url, data) {
-    var req = newXMLHttpRequest();
-    req.open('POST', url, false);
-    req.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-    req.send(data);
-    return req.responseText;
-}
-//var ipv6 = post('http://[2402:f000:0:2c4::198]/getip.php');
-//$("#ipv6").val(ipv6);
-//var user_ip= post('http://118.229.2.198/getip.php');
-//$("#user_ip").val(user_ip);
 </script>
+</head>
 </body>
 </html>
 
@@ -1567,3 +1451,693 @@ $(function() {
         return false;
     });
 });
+
+####################################################################################################
+###############################          08-net-wired.html          ################################
+####################################################################################################
+
+﻿<!doctype html><html><head>    <meta HTTP-EQUIV="pragma" content="no-cache">     <meta HTTP-EQUIV="Cache-Control" content="no-store, must-revalidate">     <meta HTTP-EQUIV="expires" content="Wed, 26 Feb 1997 08:21:57 gmt">     <meta HTTP-EQUIV="expires" content="0">       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">  <title>清华大学校园网 Tsinghua University Network</title>  <link rel="stylesheet" type="text/css" href="/css/wired.css" />  <link rel="stylesheet" type="text/css" href="/css/common.css" />  <link rel="shortcut icon" href="/image/icon16-yellow.ico" type="image/x-icon" />  <link rel="icon" href="/image/icon32.png" sizes="32x32" type="image/png" />    <script src="/script/jquery.js"></script>  <script src="util.js"></script>  <script src="md5.js"></script>  <script src="login.js"></script></head><body id="non_phone">  <div id="center">      <div id="head">        <div id="title">            <p>清华大学校园网</p>            <p class="english">Tsinghua University Network</p>        </div>    </div>    <!-- start -->    <div class="qrcode">    <center>        <p><img src="/image/qrcode_for_258.jpg" width="100" height="100"></p>        <p><font size=2>欢迎关注“清华大学信息服务”</font></p>    </center>    </div>    <!-- end -->    <div id="content">      <div class="greet">您好，&nbsp;Hello,</div>      <div class="triangle_greet"></div>      <div id="notice_box">        <div class="corner"></div>        <div id="notice">          <p>&nbsp;<br/><br/>&nbsp;</p>          <div width="320"align="center">            <marquee onmouseover="this.stop()" onmouseout="this.start()" scrollAmount="1.0" width="300" align="left" height="90" direction="up" border="0" id="msg" style="color:white;">            </marquee>          </div>        </div>      </div>      <div id="login">        <form name="login_form" id="login_form" action="/do_login.php" method="post" onsubmit="do_login();">          <input type="hidden" name="is_pad" value="2">          <input type="hidden" name="n" value="100">          <input type="hidden" name="type" value="1">          <input type="hidden" name="drop" value="0">     <input type="hidden" name="action" value="login">          <input type="hidden" name="ac_id" id="ac_id" value="1">          <div class="field">            <div class="label_text" for="uname">用户名<p class="english">User&nbsp;ID</p></div>            <input type="text" name="uname" id="uname" value="" autocorrect="off" autocapitalize="off">          </div>          <div class="field">            <div class="label_text" for="pass">密码<p class="english">Password</p></div>            <input type="password" name="pass" id="pass" autocorrect="off" autocapitalize="off">          </div>          <div class="field" id="remember">                                 </div>          <a id="account" href="https://usereg.tsinghua.edu.cn" title="账户设置&#10;Account&nbsp;Settings">账户设置            <p class="english">Account&nbsp;Settings</p></a>          <input type="button" name="connect" id="connect" onclick="do_login();">        </form>      </div>      <div class="triangle_login"></div>      <div id="download">        <ul id="system">          <li><a class="windows" title="Windows">Windows</a></li>          <li><a class="mac" title="MacOS">MacOS</a></li>          <!--li><a class="mac"  title="MacOS">MacOS</a></li-->          <li><a class="linux"  title="Linux">Linux</a></li>          <li><a class="android" title="Android">Android</a></li>          <li><a class="ios"  title="iOS">iOS</a></li>          <!--li><a class="windows" href="/files/Tunet2015.exe" title="Windows">Windows</a></li>          <li><a class="mac" href="/files/TUNet_mac_os_x86.zip" title="MacOS">MacOS</a></li>          <li><a class="linux" href="/files/TUNet_linux.rar" title="Linux">Linux</a></li>          <li><a class="android" href="/files/Tunet2015.apk" title="Android">Android</a></li>          <li><a class="ios" href="/files/TUNet_IOS.zip" title="iOS">iOS</a></li-->        </ul>      </div>      <ul id="widget">        <li class="bookmark"><a href="javascript:addBookmark('TUNet 登录');" title="收藏&#10;Bookmark&nbsp;This&nbsp;Page">收藏<p class="english">Bookmark&nbsp;This&nbsp;Page</p></a></li>        <li class="help"><a href="/help/help.html" title="帮助&#10;Help">帮助<p class="english">Help</p></a></li>        <li class="contact">        <div class="title">联系<p class="english">Contact</p></div>        <div class="detail english">+86-10-62784859<a href="mailto:its@tsinghua.edu.cn" title="电子邮件&#10;Email">its@tsinghua.edu.cn</a></div></li>      </ul>    </div>    <div id="foot">清华大学信息化技术中心<p class="english">Information Technology Center of Tsinghua University</p></div>  </div></body></html><!-- vi: se sw=2: -->
+
+####################################################################################################
+################################          09-net-login.js          #################################
+####################################################################################################
+
+var redirect_url="";
+window.onload=function()
+{
+    if(document.getElementById("message"))
+    {
+        if(typeof(message_data) != "undefined")
+        {
+            message_data.con = message_data.con.replace(/\\\"/ig, "");
+            document.getElementById("message").innerHTML = message_data.con;
+        }
+        if(typeof(bulletin_data) != "undefined")
+        {
+            bulletin_data = bulletin_data.replace(/\\\"/ig, "");
+            document.getElementById("message").innerHTML = bulletin_data;
+        }
+    }
+
+    var u=document.location.search.substring(1);
+
+    var is_online=1;
+    if(u!="")//解析URL
+    {
+        var arr1 = u.split("&");
+        var i=0;
+        for(i=0; i<arr1.length; i++)
+        {
+            if(arr1[i] == "")
+                continue;
+            var arr2 = arr1[i].split("=");
+            if(arr2[0] == "wlanacname")
+            {
+                document.login_form.wlanacname.value=arr2[1];
+            }
+            else if(arr2[0] == "wlanuserip" || arr2[0] == "ip")
+            {
+                document.login_form.user_ip.value=arr2[1];
+            }
+            else if(arr2[0] == "ssid")
+            {
+                document.login_form.ssid.value=arr2[1];
+            }
+            else if(arr2[0] == "vlan")
+            {
+                document.login_form.vlan.value=arr2[1];
+            }
+            else if(arr2[0] == "portal_ip" || arr2[0] == "nas_ip")
+            {
+                document.login_form.nas_ip.value=arr2[1];
+            }
+            else if(arr2[0] == "client_id" || arr2[0] == "mac")
+            {
+                document.login_form.mac.value=arr2[1];
+            }
+            else if(arr2[0] == "wbaredirect" || arr2[0] == "userurl" || arr2[0] == "URL" || arr2[0] == "url")
+            {
+                //document.login_form.wbaredirect.value=arr2[1];
+                redirect_url = arr2[1];
+            }
+            else if(arr2[0] == "is_debug")
+            {
+                document.login_form.is_debug.value=arr2[1];
+            }
+            else if(arr2[0] == "ac_type")
+            {
+                document.login_form.ac_type.value=arr2[1];
+            }
+            else if(arr2[0] == "rad_type")
+            {
+                document.login_form.rad_type.value=arr2[1];
+            }
+            else if(arr2[0] == "local_auth")
+            {
+                document.login_form.local_auth.value=arr2[1];
+            }
+            else if(arr2[0] == "ac_id")
+            {
+                document.login_form.ac_id.value=arr2[1];
+            }
+            /*
+            else if(arr2[0] == "vrf-id" || arr2[0] == "vrf_id")
+            {
+                document.login_form.vrf_id.value=arr2[1];
+            }
+            */
+        }
+    }
+
+}
+function get_err(res)
+{
+    var p=/E([\d]+)/;
+    var arr = p.exec(res);
+    var n=0;
+    if(arr)
+        n=Number(arr[1]);
+    var msg=res;
+    switch(n)
+    {
+    case 3001:
+        msg="流量或时长已用尽";
+        goto_service=1;
+        break;
+    case 3002:
+        msg="计费策略条件不匹配";
+        break;
+    case 3003:
+        msg="控制策略条件不匹配";
+        break;
+    case 3004:
+        msg="余额不足";
+        goto_service=1;
+        break;
+    case 2531:
+        msg="用户不存在";
+        break;
+    case 2532:
+        msg="两次认证的间隔太短";
+        break;
+    case 2533:
+        msg="尝试次数过于频繁";
+        break;
+    case 2553:
+        msg="密码错误";
+        break;
+    case 2601:
+        msg="不是专用客户端";
+        break;
+    case 2606:
+        msg="用户被禁用或无联网权限";
+        break;
+    case 2611:
+        msg="MAC绑定错误";
+        break;
+    case 2613:
+        msg="NAS PORT绑定错误";
+        break;
+    case 2616:
+        msg="余额不足";
+        goto_service=1;
+        break;
+    case 2620:
+        msg="连接数已满，请登录http://usereg.tsinghua.edu.cn，选择下线您的IP地址。";
+        goto_service=1;
+        break;
+    case 2806:
+        msg="找不到符合条件的产品";
+        break;
+    case 2807:
+        msg="找不到符合条件的计费策略";
+        break;
+    case 2808:
+        msg="找不到符合条件的控制策略";
+        break;
+    case 2833:
+        msg="IP地址异常，请重新拿地址";
+        break;
+    case 2840:
+        msg="校内地址不允许访问外网";
+        break;
+    case 2841:
+        msg="IP地址绑定错误";
+        break;
+    case 2842:
+        msg="IP地址无需认证可直接上网";
+        break;
+    case 2843:
+        msg="IP地址不在IP表中";
+        break;
+    case 2844:
+        msg="IP地址在黑名单中，请联系管理员。";
+        break;
+    case 2901:
+        msg="第三方接口认证失败";
+        break;
+    }
+    return msg;
+}
+
+function do_login() {
+    var uname = $('#uname').val();
+    var pass = $('#pass').val();
+    var ac_id = $('#ac_id').val();
+
+    if (uname == '') {
+        alert("请填写用户名");
+        $('#uname').focus();
+        return;
+    }
+
+    if (pass == '') {
+        alert("请填写密码");
+        $('#pass').focus();
+        return;
+    }
+
+    //var topost = "action=login&username=" + uname + "&password={MD5_HEX}" + CryptoJS.MD5(pass) +
+    var topost = "action=login&username=" + uname + "&password={MD5_HEX}" + hex_md5(pass) +
+        "&ac_id="+ac_id;
+    //alert(topost);
+    //var res = post('/do_login.php', topost);
+    $.post("/do_login.php", topost, function(res) {
+       if(res == "Login is successful.") {
+
+            //var a = res.split(",");
+            //window.open("succeed.html?" + a.join(','), "user_login");
+            alert("联网成功");
+            nav = navigator.userAgent.toLowerCase();
+            var pp_nav = /safari/;
+            var pp_mac = /mac/;
+        //    if(pp_nav.test(nav) || (!pp_mac.test(nav))) {
+          //      if ($('#cookie')[0].checked) {
+            //        $.cookie('tunet', uname + '\n' + pass,
+            //            { expires: 365, path: '/' });
+            //    } else {
+            //        $.cookie('tunet', null);
+            //    }
+            //}
+        if(pp_nav.test(nav) || (!pp_mac.test(nav))) {
+            $.cookie('tunet', null);
+        }
+            if (redirect_url) {
+                var pp = /^http/;
+                if(!pp.test(redirect_url)) {
+                    redirect_url = "http://"+redirect_url;
+                }
+                //setTimeout("location = redirect_url;", wireness == 'wired' ? 1000 : 3000);
+                setTimeout("location = redirect_url;", 1000);
+            } else {
+               window.location="succeed.html";
+            }
+    } else if(res == "IP has been online, please logout.") {
+            alert("您已在线了");
+    } else {
+            var msg111 = get_err(res);
+            if(msg111 == "用户被禁用或无联网权限")
+            {
+                alert(res+" or max_online_num=0" + "("+msg111+")")
+            }
+            else
+            {
+                alert(res+"("+msg111+")");
+            }
+
+    }
+    });
+}
+
+function refreshLabel(e, f) {
+    $('.placeholder[for=' + e.id + ']').css('display', (f || e.value) ? 'none' : 'inherit');
+}
+
+function addBookmark(name) {
+    var name = name || 'TUNet 网页登录';
+    var url = $.url().attr('source').replace(/\?.*$/, '');
+    if (window.sidebar) {
+        window.sidebar.addPanel(name, url, "");
+    } else if (document.all) {
+        window.external.AddFavorite(url, name);
+    } else if (window.opera && window.print) {
+        return true;
+    }
+}
+
+if (!$.url().param('noforward')) {
+    $.post("/do_login.php", "action=check_online", function(data) {
+        if (data == "online") {
+            if (!$.url().param('nosucceed')) {
+                location = dst || '/' + wireness + '/succeed.html?' + data;
+            } else if (dst) {
+                location = dst;
+            }
+        }
+    });
+}
+
+$(document).ready(function() {
+    var cookie = $.cookie('tunet');
+    if (cookie) {
+        var a = cookie.split('\n', 2);
+        $('#uname').val(a[0]);
+        $('#pass').val(a[1]);
+        $('#cookie')[0].checked = true;
+    }
+    if ($('#msg').length) {
+        $.get('/msg.txt', function(data) {
+            $('#msg').text(data);
+        })
+    }
+
+    $('#uname, #pass').bind('focusin focusout', function(ev) {
+        refreshLabel(ev.target, ev.type == 'focusin');
+    })
+    refreshLabel($('#uname')[0]);
+    refreshLabel($('#pass')[0]);
+})
+
+####################################################################################################
+#################################          10-net-md5.js          ##################################
+####################################################################################################
+
+/*
+ * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+ * Digest Algorithm, as defined in RFC 1321.
+ * Version 2.1 Copyright (C) Paul Johnston 1999 - 2002.
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for more info.
+ */
+
+/*
+ * Configurable variables. You may need to tweak these to be compatible with
+ * the server-side, but the defaults work in most cases.
+ */
+var hexcase = 0;  /* hex output format. 0 - lowercase; 1 - uppercase        */
+var b64pad  = ""; /* base-64 pad character. "=" for strict RFC compliance   */
+var chrsz   = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
+
+/*
+ * These are the functions you'll usually want to call
+ * They take string arguments and return either hex or base-64 encoded strings
+ */
+function hex_md5(s){ return binl2hex(core_md5(str2binl(s), s.length * chrsz));}
+function b64_md5(s){ return binl2b64(core_md5(str2binl(s), s.length * chrsz));}
+function str_md5(s){ return binl2str(core_md5(str2binl(s), s.length * chrsz));}
+function hex_hmac_md5(key, data) { return binl2hex(core_hmac_md5(key, data)); }
+function b64_hmac_md5(key, data) { return binl2b64(core_hmac_md5(key, data)); }
+function str_hmac_md5(key, data) { return binl2str(core_hmac_md5(key, data)); }
+
+/*
+ * Perform a simple self-test to see if the VM is working
+ */
+function md5_vm_test()
+{
+  return hex_md5("abc") == "900150983cd24fb0d6963f7d28e17f72";
+}
+
+/*
+ * Calculate the MD5 of an array of little-endian words, and a bit length
+ */
+function core_md5(x, len)
+{
+  /* append padding */
+  x[len >> 5] |= 0x80 << ((len) % 32);
+  x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+  var a =  1732584193;
+  var b = -271733879;
+  var c = -1732584194;
+  var d =  271733878;
+
+  for(var i = 0; i < x.length; i += 16)
+  {
+    var olda = a;
+    var oldb = b;
+    var oldc = c;
+    var oldd = d;
+
+    a = md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+    d = md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
+    c = md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
+    b = md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
+    a = md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
+    d = md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
+    c = md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
+    b = md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
+    a = md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
+    d = md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
+    c = md5_ff(c, d, a, b, x[i+10], 17, -42063);
+    b = md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
+    a = md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
+    d = md5_ff(d, a, b, c, x[i+13], 12, -40341101);
+    c = md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
+    b = md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
+
+    a = md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
+    d = md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
+    c = md5_gg(c, d, a, b, x[i+11], 14,  643717713);
+    b = md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+    a = md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
+    d = md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
+    c = md5_gg(c, d, a, b, x[i+15], 14, -660478335);
+    b = md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
+    a = md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
+    d = md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
+    c = md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
+    b = md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
+    a = md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
+    d = md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
+    c = md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
+    b = md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
+
+    a = md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
+    d = md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
+    c = md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
+    b = md5_hh(b, c, d, a, x[i+14], 23, -35309556);
+    a = md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
+    d = md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
+    c = md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
+    b = md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
+    a = md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
+    d = md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+    c = md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
+    b = md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
+    a = md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
+    d = md5_hh(d, a, b, c, x[i+12], 11, -421815835);
+    c = md5_hh(c, d, a, b, x[i+15], 16,  530742520);
+    b = md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
+
+    a = md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+    d = md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
+    c = md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
+    b = md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
+    a = md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
+    d = md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
+    c = md5_ii(c, d, a, b, x[i+10], 15, -1051523);
+    b = md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
+    a = md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
+    d = md5_ii(d, a, b, c, x[i+15], 10, -30611744);
+    c = md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
+    b = md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
+    a = md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
+    d = md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
+    c = md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
+    b = md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
+
+    a = safe_add(a, olda);
+    b = safe_add(b, oldb);
+    c = safe_add(c, oldc);
+    d = safe_add(d, oldd);
+  }
+  return Array(a, b, c, d);
+
+}
+
+/*
+ * These functions implement the four basic operations the algorithm uses.
+ */
+function md5_cmn(q, a, b, x, s, t)
+{
+  return safe_add(bit_rol(safe_add(safe_add(a, q), safe_add(x, t)), s),b);
+}
+function md5_ff(a, b, c, d, x, s, t)
+{
+  return md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+}
+function md5_gg(a, b, c, d, x, s, t)
+{
+  return md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+}
+function md5_hh(a, b, c, d, x, s, t)
+{
+  return md5_cmn(b ^ c ^ d, a, b, x, s, t);
+}
+function md5_ii(a, b, c, d, x, s, t)
+{
+  return md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+}
+
+/*
+ * Calculate the HMAC-MD5, of a key and some data
+ */
+function core_hmac_md5(key, data)
+{
+  var bkey = str2binl(key);
+  if(bkey.length > 16) bkey = core_md5(bkey, key.length * chrsz);
+
+  var ipad = Array(16), opad = Array(16);
+  for(var i = 0; i < 16; i++)
+  {
+    ipad[i] = bkey[i] ^ 0x36363636;
+    opad[i] = bkey[i] ^ 0x5C5C5C5C;
+  }
+
+  var hash = core_md5(ipad.concat(str2binl(data)), 512 + data.length * chrsz);
+  return core_md5(opad.concat(hash), 512 + 128);
+}
+
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+function safe_add(x, y)
+{
+  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return (msw << 16) | (lsw & 0xFFFF);
+}
+
+/*
+ * Bitwise rotate a 32-bit number to the left.
+ */
+function bit_rol(num, cnt)
+{
+  return (num << cnt) | (num >>> (32 - cnt));
+}
+
+/*
+ * Convert a string to an array of little-endian words
+ * If chrsz is ASCII, characters >255 have their hi-byte silently ignored.
+ */
+function str2binl(str)
+{
+  var bin = Array();
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < str.length * chrsz; i += chrsz)
+    bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (i%32);
+  return bin;
+}
+
+/*
+ * Convert an array of little-endian words to a string
+ */
+function binl2str(bin)
+{
+  var str = "";
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < bin.length * 32; i += chrsz)
+    str += String.fromCharCode((bin[i>>5] >>> (i % 32)) & mask);
+  return str;
+}
+
+/*
+ * Convert an array of little-endian words to a hex string.
+ */
+function binl2hex(binarray)
+{
+  var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i++)
+  {
+    str += hex_tab.charAt((binarray[i>>2] >> ((i%4)*8+4)) & 0xF) +
+           hex_tab.charAt((binarray[i>>2] >> ((i%4)*8  )) & 0xF);
+  }
+  return str;
+}
+
+/*
+ * Convert an array of little-endian words to a base-64 string
+ */
+function binl2b64(binarray)
+{
+  var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i += 3)
+  {
+    var triplet = (((binarray[i   >> 2] >> 8 * ( i   %4)) & 0xFF) << 16)
+                | (((binarray[i+1 >> 2] >> 8 * ((i+1)%4)) & 0xFF) << 8 )
+                |  ((binarray[i+2 >> 2] >> 8 * ((i+2)%4)) & 0xFF);
+    for(var j = 0; j < 4; j++)
+    {
+      if(i * 8 + j * 6 > binarray.length * 32) str += b64pad;
+      else str += tab.charAt((triplet >> 6*(3-j)) & 0x3F);
+    }
+  }
+  return str;
+}
+
+####################################################################################################
+###############################          11-net-succeed.js          ################################
+####################################################################################################
+
+var tm;
+
+function format_time(sec) {
+    var h = Math.floor(sec / 3600);
+    var m = Math.floor((sec % 3600) / 60);
+    var s = sec % 3600 % 60;
+    return sprintf('%02d:%02d:%02d', h, m, s);
+}
+
+function format_byte(n) {
+    var f = function(k, s) {
+        return sprintf('%.2f', n / k) + s;
+    }
+    if (n > 1e9) {
+        return f(1e9, 'G');
+    } else if (n > 1e6) {
+        return f(1e6, 'M');
+    } else if (n > 1e3) {
+        return f(1e3, 'K');
+    } else {
+        return n + 'B';
+    }
+}
+
+function myclock() {
+    $('#clock').text(format_time(++tm));
+    setTimeout("myclock()", 1000);
+}
+
+function do_logout() {
+    var topost = "action=logout";
+    var res = post('/do_login.php', topost);
+    if(res == "Logout is successful.")
+    {
+        alert("连接已断开");
+            window.location.href="/";
+    }
+    else
+    {
+        alert(res);
+    }
+
+    return;
+    var code = {
+        'logout_ok': '连接已断开',
+        'not_online_error': '您不在线上'
+    }[res];
+
+    if (code) {
+        alert(code);
+           window.location.href="/";
+        //window.close();
+    } else {
+        alert('操作失败');
+           window.location.href="/";
+    }
+}
+
+$(document).ready(function() {
+    var r = post('/rad_user_info.php');
+    var a = r.split(',');
+    $('#uname').text(a[0]);
+
+    var f = a[6] / 1000000000;
+    if (f <=50) {
+        len = f * 106 / 50
+    } else if (f >50 && f <=125) {
+    len = 106 + (f - 50) * (53 * 3) / 30
+    } else {
+    len = 280
+    }
+    //tm = Number(a[4]);
+    tm = Number(a[2]-a[1]);
+
+    $('#usage_value').css('width', len + 'px');
+    $('#usage_flux').text(format_byte(a[6]));
+    myclock();
+});
+
+####################################################################################################
+#################################          12-net-util.js          #################################
+####################################################################################################
+
+function newXMLHttpRequest() {
+    return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+}
+
+// Synchronous POST request.
+function post(url, data) {
+    alert('aaa');
+    var req = newXMLHttpRequest();
+    req.open('POST', url, false);
+    alert('bbb');
+    req.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    req.send(data);
+    alert("ccc is " + req.responseText);
+    return req.responseText;
+}
+
+// Synchronous GET request.
+function get(url) {
+    var req = newXMLHttpRequest();
+    req.open('GET', url, false);
+    req.send('');
+    return req.responseText;
+}
+
+function include(url) {
+    $.globalEval(get(url));
+}
+
+include('/script/jquery.url.js');
+include('/script/jquery.cookie.js');
+include('/script/sprintf.js');
+
+dst = $.url().param('url');
+wireness = $.url().segment(1);
+

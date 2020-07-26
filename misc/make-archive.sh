@@ -1,6 +1,7 @@
 #!/bin/sh
 authEndpoint=http://auth.tsinghua.edu.cn
 usrgEndpoint=http://usereg.tsinghua.edu.cn
+netEndpoint=http://net.tsinghua.edu.cn
 
 # create temp dir
 mkdir -p tmp
@@ -15,6 +16,12 @@ curl -fsSL ${authEndpoint}/script/md5.js -o tmp/04-auth-md5.js
 curl -fsSL ${usrgEndpoint}/login.php -o tmp/05-usrg-login.php
 curl -fsSL ${usrgEndpoint}/ip_login_import.php -o tmp/06-usrg-ip_login_import.php
 curl -fsSL ${usrgEndpoint}/js/portal.main.min.js -o tmp/07-usrg-portal.main.min.js
+
+curl -fsSL ${netEndpoint}/wired/ -o tmp/08-net-wired.html
+curl -fsSL ${netEndpoint}/wired/login.js -o tmp/09-net-login.js
+curl -fsSL ${netEndpoint}/wired/md5.js -o tmp/10-net-md5.js
+curl -fsSL ${netEndpoint}/wired/succeed.js -o tmp/11-net-succeed.js
+curl -fsSL ${netEndpoint}/wired/util.js -o tmp/12-net-util.js
 
 # file preprocess
 enca -L chinese -gx utf-8 tmp/*
