@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define MAX_BUF_LEN (1024)
 
@@ -56,6 +57,28 @@ void tsauth_cleanup(tsauth_info *info)
     tsauth_info_cleanup(info->password);
     tsauth_info_cleanup(info->info);
     tsauth_info_cleanup(info->chksum);
+    tsauth_info_cleanup(info->ipv4);
+    tsauth_info_cleanup(info->ipv6);
+}
+
+static inline void check_auth(tsauth_info *info)
+{
+    info->authed = 0;
+    _cleanup_free_ char *body = http_get("http://" ENDPOINT_NET_BASE);
+    if (body && 0 == strcmp(body, "ok"))
+        info->authed = 1;
+}
+
+static inline void check_net(tsauth_info *info)
+{
+    info->neted = 0;
+    check_auth(info);
+    if (!info->authed)
+        return;
+
+    _cleanup_free_ char *body = http_get(ENDPOINT_NET_LOGIN "?action=check_online");
+    if (body && 0 == strcmp(body, "online"))
+        info->neted = 1;
 }
 
 static inline json_object *extract_jsonp_response(char *src)
@@ -85,9 +108,12 @@ int get_acid(tsauth_info *info)
 
     if (!info->ip)
     {
+        _cleanup_free_ char *html = http_get("http://" ENDPOINT_NET_BASE);
+        if (!html)
+            return TSAUTH_ERROR_NO_RESPONSE;
+
         regex_t reg;
         regmatch_t pmatch[3];
-        _cleanup_free_ char *html = http_get("http://" NET_BASE_HOST);
         regcomp(&reg, "href=\"http://auth4.tsinghua.edu.cn/index_([0-9]+).html\"", REG_EXTENDED);
         if (0 == regexec(&reg, html, 3, pmatch, 0))
         {
@@ -102,8 +128,8 @@ int get_acid(tsauth_info *info)
     {
         _cleanup_free_ char *form = xmalloc(MAX_BUF_LEN);
         snprintf(form, MAX_BUF_LEN, "actionType=searchNasId&ip=%s", info->ip);
-        _cleanup_free_ char *acid = http_post(USEREG_BASE_HOST "/ip_login_import.php", form);
-        if (0 != strcmp(acid, "fail"))
+        _cleanup_free_ char *acid = http_post(ENDPOINT_USEREG "/ip_login_import.php", form);
+        if (acid && 0 != strcmp(acid, "fail"))
         {
             info->acid = xmalloc(strlen(acid) + 1);
             strcpy(info->acid, acid);
@@ -125,7 +151,7 @@ int get_challenge(tsauth_info *info)
     int result = TSAUTH_OK;
 
     snprintf(url, MAX_BUF_LEN,
-             AUTH_BASE_ENDPOINT "/get_challenge?callback=tsauth"
+             ENDPOINT_AUTH_BASE "/get_challenge?callback=tsauth"
                                 "&username=%s"
                                 "&ip=%s"
                                 "&double_stack=%d",
@@ -250,6 +276,10 @@ int tsauth_login(tsauth_info *info)
     if (!info)
         return TSAUTH_ERROR_NULL_INFO;
 
+    check_auth(info);
+    if (!info->ip && info->authed)
+        return TSAUTH_OK;
+
     if (!info->userid)
         return TSAUTH_ERROR_NULL_USERID;
     if (!info->passwd)
@@ -279,7 +309,7 @@ int tsauth_login(tsauth_info *info)
     _cleanup_curl_free_ char *chksum = escape(info->chksum);
 
     snprintf(url, MAX_BUF_LEN,
-             AUTH_BASE_ENDPOINT "/srun_portal?callback=tsauth&action=login"
+             ENDPOINT_AUTH_BASE "/srun_portal?callback=tsauth&action=login"
                                 "&username=%s"
                                 "&password=%s"
                                 "&ac_id=%s"
@@ -313,9 +343,9 @@ int tsauth_login(tsauth_info *info)
                 result = json_object_get_int(iter.val);
         }
         if (TSAUTH_OK == result && success_msg)
-            message("Login successfully: %s", success_msg);
+            message("auth: Login successfully: %s", success_msg);
         else
-            warn("Login failed: %s", error_msg);
+            warn("auth: Login failed: %s", error_msg);
         json_object_put(data);
     }
     else
@@ -324,10 +354,57 @@ int tsauth_login(tsauth_info *info)
     return result;
 }
 
+int tsauth_netin(tsauth_info *info)
+{
+    if (!info)
+        return TSAUTH_ERROR_NULL_INFO;
+
+    check_net(info);
+    if (!info->authed)
+        return TSAUTH_ERROR_NOT_AUTH;
+
+    if (!info->neted)
+    {
+        if (!info->userid)
+            return TSAUTH_ERROR_NULL_USERID;
+        if (!info->passwd)
+            return TSAUTH_ERROR_NULL_PASSWD;
+
+        unsigned char digest[16];
+        _cleanup_free_ char *md5hex = xmalloc(32 + 1);
+        _cleanup_free_ char *form = xmalloc(MAX_BUF_LEN);
+
+        mbedtls_md_context_t ctx;
+        mbedtls_md_init(&ctx);
+
+        mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_MD5), 0);
+        mbedtls_md_starts(&ctx);
+        mbedtls_md_update(&ctx, info->passwd, strlen(info->passwd));
+        mbedtls_md_finish(&ctx, digest);
+        mbedtls_md_free(&ctx);
+
+        bytes_to_hex(&md5hex, digest, 16);
+        verbose("tsauth_netin: password: {MD5_HEX}%s", md5hex);
+
+        snprintf(form, MAX_BUF_LEN, "action=login&username=%s&password={MD5_HEX}%s&ac_id=1", info->userid, md5hex); // ac_id = 1
+        _cleanup_free_ char *text = http_post(ENDPOINT_NET_LOGIN, form);
+        message("net: %s", text);
+        if (text && 0 == strcmp(text, "Login is successful."))
+            return TSAUTH_OK;
+        else
+            return TSAUTH_ERROR_NETIN_FAILED;
+    }
+    return TSAUTH_OK;
+}
+
 int tsauth_logout(tsauth_info *info)
 {
     if (!info)
         return TSAUTH_ERROR_NULL_INFO;
+
+    check_auth(info);
+    if (!info->ip && !info->authed)
+        return TSAUTH_OK;
 
     if (!info->userid)
         return TSAUTH_ERROR_NULL_USERID;
@@ -354,7 +431,7 @@ int tsauth_logout(tsauth_info *info)
     _cleanup_curl_free_ char *chksum = escape(info->chksum);
 
     snprintf(url, MAX_BUF_LEN,
-             AUTH_BASE_ENDPOINT "/srun_portal?callback=tsauth&action=logout"
+             ENDPOINT_AUTH_BASE "/srun_portal?callback=tsauth&action=logout"
                                 "&username=%s"
                                 "&ac_id=%s"
                                 "&ip=%s"
@@ -392,9 +469,9 @@ int tsauth_logout(tsauth_info *info)
             result = TSAUTH_ERROR_LOGOUT_FAILED;
 
         if (TSAUTH_OK == result)
-            message("Logout successfully: %s", success_msg);
+            message("auth: Logout successfully: %s", success_msg);
         else
-            warn("Logout failed: %s", error_msg);
+            warn("auth: Logout failed: %s", error_msg);
 
         json_object_put(data);
     }
@@ -402,6 +479,84 @@ int tsauth_logout(tsauth_info *info)
         result = TSAUTH_ERROR_NO_RESPONSE;
 
     return result;
+}
+
+int tsauth_netout(tsauth_info *info)
+{
+    if (!info)
+        return TSAUTH_ERROR_NULL_INFO;
+
+    check_net(info);
+    if (!info->authed)
+        return TSAUTH_ERROR_NOT_AUTH;
+
+    if (info->neted)
+    {
+        _cleanup_free_ char *text = http_post(ENDPOINT_NET_LOGIN, "action=logout");
+        message("net: %s", text);
+        if (text && 0 == strcmp(text, "Logout is successful."))
+            return TSAUTH_OK;
+        else
+            return TSAUTH_ERROR_NETOUT_FAILED;
+    }
+    return TSAUTH_OK;
+}
+
+#define convert_readable_byte(x)     \
+    (x > 1e9 ? x / 1e9f : x / 1e6f), \
+        (x > 1e9 ? "GB" : "MB")
+#define convert_readable_duration(x)                                                     \
+    (x > 86400 ? x / 86400.f : (x > 3600 ? x / 3600.f : (x > 60 ? x / 60.f : x * 1.f))), \
+        (x > 86400 ? "days" : (x > 3600 ? "hours" : (x > 60 ? "mins" : "seconds")))
+
+int tsauth_status(tsauth_info *info)
+{
+    if (!info)
+        return TSAUTH_ERROR_NULL_INFO;
+
+    check_net(info);
+    if (info->authed)
+    {
+        info->ipv4 = http_get(ENDPOINT_GET_IPV4);
+        message("IPv4: %s", info->ipv4);
+        info->ipv6 = http_get(ENDPOINT_GET_IPV6);
+        message("IPv6: %s", info->ipv6);
+    }
+    else
+        message("Not Authenticated!");
+    if (info->neted)
+    {
+        _cleanup_free_ char *data = http_get(ENDPOINT_USER_INFO);
+
+        char *s[20] = {NULL};
+        char *p = s[0] = data;
+        int i = 0;
+        while (*(++p))
+            if (*p == ',')
+            {
+                *p = 0;
+                s[++i] = p + 1;
+            }
+
+        if (s[1])
+            sscanf(s[1], "%ld", &info->start);
+        if (s[6])
+            sscanf(s[6], "%ld", &info->used_bytes);
+        if (s[7])
+            sscanf(s[7], "%ld", &info->used_time);
+        if (s[11])
+            sscanf(s[11], "%f", &info->quota);
+
+        struct tm *t = localtime(&info->start);
+        char timebuf[32] = {0};
+        strftime(timebuf, 32, "%Y-%m-%d %H:%M:%S", t);
+        message("Login time: %s", timebuf);
+        message("Used: %.4f %s", convert_readable_byte(info->used_bytes));
+        message("IPv4 used time: %lds (%f %s)", info->used_time, convert_readable_duration(info->used_time));
+        message("Quota: %.2f", info->quota);
+    }
+    else
+        message("net not login");
 }
 
 static char error_string[32] = {0};
@@ -433,6 +588,15 @@ const char *tsauth_strcode(int code)
         break;
     case TSAUTH_ERROR_RES_FAIL:
         return "response fail";
+        break;
+    case TSAUTH_ERROR_NOT_AUTH:
+        return "not authenticated";
+        break;
+    case TSAUTH_ERROR_NETIN_FAILED:
+        return "net login failed";
+        break;
+    case TSAUTH_ERROR_NETOUT_FAILED:
+        return "net logout failed";
         break;
 
     default:

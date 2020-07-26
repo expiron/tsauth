@@ -9,8 +9,10 @@
 #define TSAUTH_FLAG_INSIDE      (1 << 1)
 #define TSAUTH_FLAG_LOGOUT      (1 << 2)
 #define TSAUTH_FLAG_LOGIN       (1 << 3)
-#define TSAUTH_FLAG_HTTP        (1 << 4)
-#define TSAUTH_FLAG_VERBOSE     (1 << 5)
+#define TSAUTH_FLAG_NET         (1 << 4)
+#define TSAUTH_FLAG_HTTP        (1 << 5)
+#define TSAUTH_FLAG_VERBOSE     (1 << 6)
+#define TSAUTH_FLAG_STATUS      (1 << 7)
 
 extern unsigned char flags;
 

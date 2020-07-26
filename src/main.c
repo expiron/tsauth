@@ -15,13 +15,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-static const char *opts = "d:u:p:t:iovh?";
+static const char *opts = "d:u:p:t:ionsvh?";
 
 static const struct option long_opts[] = {{"addr", required_argument, NULL, 'd'},
                                           {"http", no_argument, NULL, 0},
                                           {"inside", no_argument, NULL, 0},
                                           {"login", no_argument, NULL, 'i'},
                                           {"logout", no_argument, NULL, 'o'},
+                                          {"net", no_argument, NULL, 'n'},
+                                          {"status", no_argument, NULL, 's'},
                                           {"password", required_argument, NULL, 'p'},
                                           {"username", required_argument, NULL, 'u'},
                                           {"timeout", required_argument, NULL, 't'},
@@ -54,6 +56,12 @@ int main(int argc, char *argv[])
             break;
         case 'o':
             flags |= TSAUTH_FLAG_LOGOUT;
+            break;
+        case 'n':
+            flags |= TSAUTH_FLAG_NET;
+            break;
+        case 's':
+            flags |= TSAUTH_FLAG_STATUS;
             break;
         case 'v':
             flags |= TSAUTH_FLAG_VERBOSE;
@@ -100,13 +108,16 @@ int main(int argc, char *argv[])
     tsauth_info *info = tsauth_init(username, password, ip, flags & TSAUTH_FLAG_INSIDE);
     info->double_stack = 1;
 
+    if (flags & TSAUTH_FLAG_STATUS)
+        return tsauth_status(info);
+
     if (info->ip)
         message("IP: %s", info->ip);
 
     if (flags & TSAUTH_FLAG_LOGOUT)
-        result = tsauth_logout(info);
+        result = (flags & TSAUTH_FLAG_NET) ? tsauth_netout(info) : tsauth_logout(info);
     else
-        result = tsauth_login(info);
+        result = (flags & TSAUTH_FLAG_NET) ? tsauth_netin(info) : tsauth_login(info);
 
     tsauth_cleanup(info);
     http_cleanup();
