@@ -8,8 +8,8 @@
 #include <json-c/json.h>
 #include <mbedtls/md.h>
 
+#include <ctype.h>
 #include <errno.h>
-#include <regex.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -112,14 +112,17 @@ int get_acid(tsauth_info *info)
         if (!html)
             return TSAUTH_ERROR_NO_RESPONSE;
 
-        regex_t reg;
-        regmatch_t pmatch[3];
-        regcomp(&reg, "href=\"http://auth4.tsinghua.edu.cn/index_([0-9]+).html\"", REG_EXTENDED);
-        if (0 == regexec(&reg, html, 3, pmatch, 0))
+        char *p = strstr(html, "href=\"http://auth4.tsinghua.edu.cn/index_");
+        if (p)
         {
-            info->acid = xmalloc(pmatch[1].rm_eo - pmatch[1].rm_so + 1);
-            *(html + pmatch[1].rm_eo) = 0;
-            strcpy(info->acid, html + pmatch[1].rm_so);
+            p += 41; // 41 = strlen("href=\"http://auth4.tsinghua.edu.cn/index_")
+            char *q = p;
+
+            while (isdigit(*(++q)));
+
+            *q = 0;
+            info->acid = xmalloc(q - p);
+            strcpy(info->acid, p);
         }
         else
             return TSAUTH_ERROR_NO_MATCHES;
@@ -137,6 +140,9 @@ int get_acid(tsauth_info *info)
         else
             return TSAUTH_ERROR_RES_FAIL;
     }
+
+    verbose("get_acid: ac_id = %s", info->acid);
+
     return TSAUTH_OK;
 }
 
